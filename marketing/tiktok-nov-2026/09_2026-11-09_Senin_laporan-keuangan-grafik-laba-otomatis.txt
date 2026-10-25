@@ -1,0 +1,30 @@
+POST #09 - Senin, 9 November 2026 - 19:00 WITA
+Laporan keuangan & grafik laba otomatis
+Pilar: Demo Fitur | Format: Slide foto (5 gambar) | Tema: Minggu 2, Fitur inti fara-wash.app
+
+GAMBAR
+Folder: slides/09_laporan-keuangan-grafik-laba-otomatis/  (upload urut 09-1.png sampai 09-5.png)
+
+ISI SLIDE
+1. Bulan ini laundry kamu untung berapa? / Fara sekarang tahu dalam 3 detik
+2. Laba bersih langsung terlihat - Pemasukan, pengeluaran, dan jumlah order. (screenshot aplikasi)
+3. Catat pengeluaran per kategori - Deterjen, listrik, plastik, dan lainnya. (screenshot aplikasi)
+4. 9 grafik yang bisa digeser Pemasukan & pengeluaran; Laba bersih; Jam ramai; Layanan terlaris; Pelanggan teratas; …dan lainnya
+5. Penutup fara-wash.app + Link di bio - Link di bio
+
+==================== CAPTION (salin mulai baris bawah) ====================
+Bulan ini laundry kamu untung berapa?
+
+Di aplikasi Fara, pemasukan, pengeluaran, dan laba bersih langsung jadi grafik. Nggak perlu rekap semalaman lagi.
+
+Link di bio.
+
+Mumpung gratis, coba dulu. Kalau nanti sudah berbayar terus kamu ngeluh, aku cuma bisa bilang: kan sudah dikasih tahu.
+
+Coba gratis: https://fara-wash.app/
+
+#aplikasilaundry #kasirlaundry #aplikasikasir #farawash
+===========================================================================
+
+CEKLIS
+[ ] Cek slide   [ ] Upload & pilih musik   [ ] Jadwalkan (9 November, 19:00 WITA)   [ ] Isi views/like di Excel setelah 3 hari

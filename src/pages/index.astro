@@ -1,0 +1,335 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+const base = import.meta.env.BASE_URL;
+const app = `${base}app/`;
+const img = (n: string) => `${base}img/${n}.webp`;
+const P: Record<string, string> = {
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  pos: '<path d="M4 4h16v10H4zM8 18h8M12 14v4M7 8h4"/>',
+  chef: '<path d="M7 14a4 4 0 0 1-.6-7.96A5 5 0 0 1 16 5a4 4 0 0 1 1 8v0M7 14v6h10v-7M7 17h10"/>',
+  table: '<path d="M3 9h18M5 9v11M19 9v11M8 9V5h8v4"/>',
+  cal: '<path d="M4 5h16v16H4zM4 10h16M9 3v4M15 3v4"/>',
+  tv: '<path d="M3 5h18v12H3zM8 21h8M12 17v4"/>',
+  chart: '<path d="M4 20V4M4 20h16M8 16v-4M12 16V8M16 16v-6"/>',
+  cash: '<path d="M3 7h18v10H3z"/><circle cx="12" cy="12" r="2.5"/>',
+  food: '<path d="M5 3v8a3 3 0 0 0 3 3v7M8 3v6M11 3v8a3 3 0 0 1-3 3M17 21V3c-2 1-3 4-3 8h3"/>',
+  wifi: '<path d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 20h.01"/>',
+  bell: '<path d="M6 16V10a6 6 0 0 1 12 0v6l2 2H4zM10 21h4"/>',
+  sheet: '<path d="M4 3h16v18H4zM4 9h16M4 15h16M10 3v18"/>',
+  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  qr: '<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2M14 18h2M18 18h2v2M16 16h2v2"/>',
+  print: '<path d="M7 8V3h10v5M7 17H4v-7h16v7h-3M7 14h10v7H7z"/>',
+};
+const XI = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+const ic = (k: string, s = 22) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${P[k]}</svg>`;
+const apps = [
+  ['pos', 'Kasir', 'Catat pesanan, pilih meja, kirim ke dapur atau langsung bayar. Kembalian terhitung sendiri.', 'Tablet · laptop · HP'],
+  ['chef', 'Layar Dapur', 'Pesanan masuk sendiri, lengkap dengan bunyi dan penanda waktu. Koki tinggal ketuk “Selesai”.', 'Tablet dapur / bar'],
+  ['table', 'Denah Meja', 'Lihat meja yang kosong, terisi, atau sudah dipesan. Tambah pesanan, pindah meja, cetak tagihan.', 'Kasir & pelayan'],
+  ['cal', 'Reservasi', 'Catat tamu yang pesan lewat telepon atau WA, cek meja bentrok, kirim konfirmasi WhatsApp sekali ketuk.', 'Semua staf'],
+  ['tv', 'Layar Antrian', 'Tampilkan nomor pesanan yang sedang disiapkan dan yang siap diambil di layar TV.', 'TV / tablet pelanggan'],
+  ['cash', 'Tutup Kasir', 'Hitung uang di laci, lihat selisihnya, lalu cetak laporan akhir shift.', 'Kasir & pemilik'],
+  ['chart', 'Laporan', 'Penjualan, jam ramai, menu terlaris, metode bayar, sampai laba kotor — tersusun sendiri.', 'Pemilik & manajer'],
+  ['qr', 'Pesan Mandiri (QR)', 'Tamu scan QR di meja, pilih menu dari HP-nya, dan pesanan langsung sampai ke kasir & dapur.', 'Paket Pro ke atas'],
+  ['print', 'Menu Meja Cetak', 'Cetak QR saja, QR plus menu, atau lembar pesanan untuk tiap meja. Ada 4 gaya, kertas A4/A5.', 'Semua paket'],
+  ['qr', 'QRIS Dinamis', 'QRIS toko yang nominalnya sudah terisi sesuai tagihan. Tamu tinggal scan dan bayar.', 'Semua paket'],
+  ['bell', 'Siap Diantar', 'Pelayan langsung tahu pesanan mana yang sudah siap, lalu menandainya setelah diantar.', 'HP pelayan'],
+  ['sheet', 'Ekspor Excel', 'Unduh ke Excel atau CSV, atau salin ke Google Sheets untuk pembukuan.', 'Pemilik & manajer'],
+];
+const faqs = [
+  ['Berapa harganya?', 'Paket Gratis Rp0 untuk selamanya, di 1 perangkat. Selama promo peluncuran, Pro Rp49.000, Bisnis Rp199.000, dan Korporat Rp299.000 per outlet per bulan (Korporat minimal 2 outlet). Bayar tahunan lebih hemat: Pro Rp490.000, Bisnis Rp2.000.000, dan Korporat Rp3.000.000 per outlet per tahun. Harga promo tetap berlaku selama Anda berlangganan.'],
+  ['Apakah ada kontrak?', 'Tidak ada. Bayar bulanan atau tahunan, dan bisa berhenti kapan saja. Kalau berhenti, akun kembali ke paket Gratis dan data tetap bisa Anda simpan ke file.'],
+  ['Kenapa QR meja tidak ada di paket Gratis?', 'Di paket Gratis, data hanya tersimpan di perangkat Anda, jadi HP tamu tidak bisa mengirim pesanan ke kasir. Pesan lewat QR butuh data yang tersimpan online, dan itu tersedia mulai paket Pro. Menu dan lembar pesanan kertas tetap bisa dicetak di paket Gratis.'],
+  ['Bisa coba dulu?', 'Bisa. Pro dan Bisnis bisa dicoba gratis 14 hari tanpa kartu kredit. Paket Gratis sendiri bisa dipakai selamanya.'],
+  ['Perlu install dari Play Store?', 'Tidak perlu. We POS dibuka lewat browser (Chrome, Safari, atau Edge) di HP, tablet, maupun laptop. Kalau ingin terasa seperti aplikasi biasa, pasang ke layar utama lewat menu “Tambahkan ke Layar Utama” atau “Install app”.'],
+  ['Perangkat apa yang dibutuhkan?', 'Satu HP atau tablet sudah cukup untuk mulai. Kalau mulai ramai, tambahkan tablet untuk dapur dan TV atau tablet untuk layar antrian. Semua perangkat melihat data yang sama.'],
+  ['Bagaimana staf masuk?', 'Pemilik menghubungkan perangkat sekali saja. Setelah itu, staf tinggal ketuk namanya dan masukkan PIN 4–6 angka. Mau ganti shift? Tekan “Kunci”.'],
+  ['Kalau internet mati?', 'Tetap bisa jualan seperti biasa. Data tersimpan di perangkat dan tersinkron sendiri begitu internet kembali.'],
+  ['Bisa cetak struk?', 'Bisa, ke printer thermal 58 mm atau 80 mm lewat menu cetak browser. Struk juga bisa dikirim ke WhatsApp tamu.'],
+  ['Apakah ada pajak & service charge?', 'Ada. Atur persentase pajak (PB1) dan service di Pengaturan, lalu semuanya terhitung sendiri di setiap transaksi dan tercetak di struk.'],
+  ['Kasir bisa membatalkan transaksi?', 'Bisa, tapi untuk item yang sudah masuk dapur atau transaksi yang sudah dibayar, perlu PIN Manajer atau Pemilik beserta alasannya. Semuanya tercatat.'],
+];
+
+/* ---------- Paket & harga ---------- */
+const KONTAK = ''; // isi link WhatsApp/email untuk paket Korporat, mis. 'https://wa.me/62812xxxx'
+type Plan = { k: string; name: string; tag: string; m: number; y: number; om?: number; oy?: number; unit: string; note: string; cta: string; href: string; hot?: boolean; feats: (string | [string, string])[] };
+const plans: Plan[] = [
+  { k: 'gratis', name: 'Gratis', tag: 'Untuk warung & usaha yang baru mulai', m: 0, y: 0, unit: 'selamanya', note: '1 perangkat · offline', cta: 'Mulai gratis', href: `${app}?daftar`,
+    feats: ['Kasir, struk cetak & WhatsApp', 'Meja, layar dapur & antrian dalam 1 perangkat', 'Cetak menu & lembar pesanan per meja', 'Laporan harian & tutup kasir', 'Backup manual ke file', ['x', 'Data hanya tersimpan di perangkat ini'], ['x', 'Pesan lewat QR meja (mulai paket Pro)']] },
+  { k: 'pro', name: 'Pro', tag: 'Untuk restoran & kafe yang mulai ramai', m: 49000, y: 490000, om: 79000, oy: 790000, unit: '/outlet/bulan', note: 'Coba gratis 14 hari', cta: 'Pilih paket', href: `${app}?daftar&paket=pro`, hot: true,
+    feats: ['Semua fitur Gratis', 'Pakai di banyak perangkat: kasir, tablet dapur, HP pelayan', 'Staf tanpa batas, masing-masing dengan PIN', 'Data tersinkron online, tetap jalan saat offline', 'Tamu pesan sendiri lewat QR meja', 'Laporan semua periode & ekspor Excel', 'Reservasi + konfirmasi WhatsApp'] },
+  { k: 'bisnis', name: 'Bisnis', tag: 'Untuk yang ingin keuangan lebih tertata', m: 199000, y: 2000000, om: 329000, oy: 3290000, unit: '/outlet/bulan', note: 'Coba gratis 14 hari', cta: 'Pilih paket', href: `${app}?daftar&paket=bisnis`,
+    feats: ['Semua fitur Pro', 'Laporan laba-rugi & catatan pengeluaran', 'Penjualan per kasir', ['soon', 'Stok bahan & resep (HPP per menu)'], 'Dukungan prioritas lewat WhatsApp'] },
+  { k: 'korporat', name: 'Korporat', tag: 'Untuk grup restoran & waralaba', m: 299000, y: 3000000, om: 499000, oy: 4990000, unit: '/outlet/bulan', note: 'Minimal 2 outlet', cta: 'Pilih paket', href: KONTAK || `${app}?daftar&paket=korporat`,
+    feats: ['Semua fitur Bisnis', 'Harga khusus per outlet', ['soon', 'Laporan gabungan semua cabang'], 'Bantuan pindah data & pelatihan staf', 'Integrasi & kebutuhan khusus', 'Dukungan prioritas'] },
+];
+const rpx = (n: number) => 'Rp' + n.toLocaleString('id-ID');
+/* Perbandingan fitur lengkap per paket — true ✓ · false – · 'soon' Segera · teks = keterangan. Urutan: Gratis, Pro, Bisnis, Korporat */
+type V = boolean | 'soon' | string;
+const Y = true, N = false, S = 'soon';
+const compare: [string, string, [string, V, V, V, V, string?][]][] = [
+  ['kasir', 'Kasir & pembayaran', [
+    ['Kasir ketuk menu + catatan per item', Y, Y, Y, Y],
+    ['Makan di tempat & bawa pulang', Y, Y, Y, Y],
+    ['Diskon persen / nominal', Y, Y, Y, Y],
+    ['Pajak (PB1) & service charge otomatis', Y, Y, Y, Y],
+    ['Tunai, QRIS, transfer & kartu', Y, Y, Y, Y],
+    ['Nominal cepat & hitung kembalian', Y, Y, Y, Y],
+    ['QRIS dinamis (nominal terisi otomatis)', Y, Y, Y, Y, 'Ubah QRIS statis toko jadi QR bernominal saat bayar'],
+    ['Tagihan terbuka & tambah pesanan', Y, Y, Y, Y],
+    ['Struk cetak 58 / 80 mm', Y, Y, Y, Y],
+    ['Struk via WhatsApp', Y, Y, Y, Y],
+    ['Pembatalan dengan PIN manajer', Y, Y, Y, Y],
+    ['Split bill', N, S, S, S],
+  ]],
+  ['layanan', 'Meja, dapur & layanan', [
+    ['Denah & status meja', Y, Y, Y, Y],
+    ['Layar dapur (KDS) dengan bunyi', 'Di perangkat yang sama', 'Tablet terpisah', 'Tablet terpisah', 'Tablet terpisah'],
+    ['Pisah stasiun dapur & bar', Y, Y, Y, Y],
+    ['Daftar siap diantar untuk pelayan', Y, Y, Y, Y],
+    ['HP pelayan untuk catat pesanan', N, Y, Y, Y],
+    ['Layar antrian nomor pesanan', Y, Y, Y, Y],
+    ['Reservasi + konfirmasi WhatsApp', N, Y, Y, Y],
+  ]],
+  ['mandiri', 'Pesan mandiri (self service)', [
+    ['Cetak menu & lembar pesanan per meja', Y, Y, Y, Y],
+    ['4 gaya menu cetak (A4 / A5)', Y, Y, Y, Y],
+    ['QR meja: pelanggan pesan dari HP', N, Y, Y, Y, 'Butuh database online — paket Gratis menyimpan data di perangkat saja'],
+    ['Kartu QR 1 / 2 / 4 / 6 per halaman', N, Y, Y, Y],
+    ['Pesanan QR langsung ke kasir & dapur', N, Y, Y, Y],
+    ['Pilihan konfirmasi kasir dulu', N, Y, Y, Y, 'Kasir memeriksa pesanan QR sebelum masuk dapur'],
+    ['Pelanggan pantau status pesanan', N, Y, Y, Y],
+  ]],
+  ['menu', 'Menu & stok', [
+    ['Menu & kategori tak terbatas + foto', Y, Y, Y, Y],
+    ['Tandai menu habis', Y, Y, Y, Y],
+    ['Varian & topping', S, S, S, S],
+    ['Stok bahan & resep (HPP per menu)', N, N, S, S],
+  ]],
+  ['laporan', 'Laporan & keuangan', [
+    ['Ringkasan penjualan & tutup kasir', Y, Y, Y, Y],
+    ['Periode laporan', 'Harian', 'Semua periode', 'Semua periode', 'Semua periode'],
+    ['Menu terlaris & jam ramai', Y, Y, Y, Y],
+    ['Catat pengeluaran', N, N, Y, Y],
+    ['Laba-rugi', N, N, Y, Y],
+    ['Penjualan per kasir', N, N, Y, Y],
+    ['Ekspor Excel, CSV & Google Sheets', N, Y, Y, Y],
+    ['Laporan gabungan semua cabang', N, N, N, S],
+  ]],
+  ['tim', 'Tim & keamanan', [
+    ['Akun staf dengan PIN', 'Tak terbatas', 'Tak terbatas', 'Tak terbatas', 'Tak terbatas'],
+    ['5 peran & hak akses', Y, Y, Y, Y, 'Pemilik, Manajer, Kasir, Pelayan, Dapur'],
+    ['Ganti shift cepat (ketuk nama + PIN)', Y, Y, Y, Y],
+    ['Kode pemulihan akun', Y, Y, Y, Y],
+    ['Putuskan perangkat hilang dari jauh', N, Y, Y, Y],
+  ]],
+  ['perangkat', 'Perangkat & data', [
+    ['Jumlah perangkat', '1', 'Tak terbatas', 'Tak terbatas', 'Tak terbatas'],
+    ['HP, tablet & laptop (tanpa Play Store)', Y, Y, Y, Y],
+    ['Tetap jalan saat offline', Y, Y, Y, Y],
+    ['Sinkron online antar perangkat', N, Y, Y, Y],
+    ['Data aman di cloud', N, Y, Y, Y],
+    ['Backup & pulihkan ke file', Y, Y, Y, Y],
+    ['Tema warna toko & logo di struk', Y, Y, Y, Y],
+  ]],
+  ['bantuan', 'Bantuan & layanan', [
+    ['Panduan & SOP restoran', Y, Y, Y, Y],
+    ['Coba gratis 14 hari', '–', Y, Y, Y],
+    ['Dukungan', 'Panduan', 'WhatsApp', 'Prioritas', 'Prioritas'],
+    ['Bantuan pindah data & pelatihan staf', N, N, N, Y],
+    ['Integrasi & kebutuhan khusus', N, N, N, Y],
+  ]],
+];
+---
+<SiteLayout title="We POS — Kasir restoran yang bisa dipakai siapa saja" desc="Aplikasi kasir untuk restoran & kafe: catat pesanan, layar dapur, meja, reservasi, pesan lewat QR, QRIS dinamis, sampai laporan. Jalan di HP, tablet & laptop, tetap bisa dipakai saat offline." page="home">
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-in">
+        <span class="pill"><i></i>Gratis untuk mulai · langsung dari browser</span>
+        <h1>Kasir restoran yang <em>bisa dipakai</em> siapa saja.</h1>
+        <p class="lead">Catat pesanan, kirim ke dapur, terima pembayaran — semua dari satu aplikasi. Cukup pakai HP atau tablet yang sudah Anda punya.</p>
+        <div class="cta">
+          <a class="btn pri lg" href={`${app}?daftar`}>Coba gratis sekarang <Fragment set:html={ic('arrow', 18)} /></a>
+          <a class="btn soft lg" href={`${base}panduan/`}>Lihat cara pakainya</a>
+        </div>
+        <ul class="ticks">
+          <li><Fragment set:html={ic('check', 16)} />Siap dipakai dalam 1 menit</li><li><Fragment set:html={ic('check', 16)} />Internet putus? Tetap jualan</li><li><Fragment set:html={ic('check', 16)} />Di HP, tablet & laptop</li><li><Fragment set:html={ic('check', 16)} />Struk cetak atau via WhatsApp</li>
+        </ul>
+      </div>
+      <div class="stage">
+        <div class="laptop"><img src={img('pos')} alt="Layar kasir We POS" width="1500" height="900" /></div>
+        <div class="phone"><img src={img('m-pos')} alt="We POS di HP" loading="lazy" /></div>
+        <div class="chipf c1"><span class="ci"><Fragment set:html={ic('bell', 20)} /></span><div><b>Pesanan #12 siap</b><small>Meja 1 · antar sekarang</small></div></div>
+        <div class="chipf c2"><span class="ci"><Fragment set:html={ic('cash', 20)} /></span><div><b>Kembalian Rp 13.710</b><small>Dihitung otomatis</small></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="alur">
+    <div class="wrap">
+      <div class="sec-h"><span class="kick">Alur kerja</span><h2>Dari pesan sampai bayar, cukup tiga langkah.</h2><p>Tidak ada menu berlapis atau istilah yang membingungkan. Staf baru bisa langsung ikut melayani tanpa pelatihan panjang.</p></div>
+      <div class="flow">
+        <div><span class="n">1</span><span class="tag">Kasir / pelayan</span><h3>Catat pesanan</h3><p>Pilih makan di sini atau bawa pulang, lalu ketuk menunya. Ada permintaan seperti “pedas” atau “tanpa es”? Tinggal tambahkan catatan.</p></div>
+        <div><span class="n">2</span><span class="tag">Dapur</span><h3>Dapur langsung tahu</h3><p>Pesanan muncul di layar dapur disertai bunyi. Begitu koki menandai selesai, pelayan langsung dapat kabar untuk mengantar.</p></div>
+        <div><span class="n">3</span><span class="tag">Kasir</span><h3>Terima pembayaran</h3><p>Tunai, QRIS, transfer, atau kartu. Kembalian terhitung sendiri, dan struk bisa dicetak atau dikirim ke WhatsApp tamu.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg2" id="aplikasi">
+    <div class="wrap">
+      <div class="show">
+        <div class="show-t"><span class="kick">Kasir</span><h3>Semudah pesan makanan lewat aplikasi.</h3>
+          <p>Menu bergambar, kategori sekali ketuk, dan pencarian cepat. Pesanan yang sedang dicatat selalu terlihat di samping — di HP, ringkasannya ada di bawah layar.</p>
+          <ul><li><Fragment set:html={ic('check', 18)} />Makan di tempat pakai nomor meja, bawa pulang pakai nama</li><li><Fragment set:html={ic('check', 18)} />Diskon persen atau rupiah, pajak & service terhitung sendiri</li><li><Fragment set:html={ic('check', 18)} />Tagihan bisa dibuka dulu, dibayar belakangan</li></ul></div>
+        <div class="shot-duo"><div class="shot"><img src={img('pay')} alt="Pembayaran" loading="lazy" /></div></div>
+      </div>
+      <div class="show rev">
+        <div class="show-t"><span class="kick">Layar Dapur</span><h3>Tidak ada lagi kertas pesanan yang terselip.</h3>
+          <p>Cukup satu tablet di dapur. Pesanan baru masuk sendiri, dan warnanya berubah kalau sudah menunggu terlalu lama. Minuman juga bisa dipisah ke layar bar.</p>
+          <ul><li><Fragment set:html={ic('check', 18)} />Hijau di bawah 10 menit, kuning di bawah 20 menit, merah lewat dari itu</li><li><Fragment set:html={ic('check', 18)} />Catatan tamu dibuat mencolok supaya tidak terlewat</li><li><Fragment set:html={ic('check', 18)} />Tambahan pesanan masuk sebagai tiket baru</li></ul></div>
+        <div class="shot dark"><img src={img('t-dapur')} alt="Layar dapur" loading="lazy" /></div>
+      </div>
+      <div class="show">
+        <div class="show-t"><span class="kick">Meja & Reservasi</span><h3>Sekali lihat, langsung tahu meja mana yang kosong.</h3>
+          <p>Meja yang terisi menampilkan total tagihan dan sudah berapa lama tamu duduk, sementara meja yang sudah dipesan diberi tanda sendiri. Tamu reservasi datang? Ketuk “Tamu datang” dan pesanannya bisa langsung dicatat.</p>
+          <ul><li><Fragment set:html={ic('check', 18)} />Pindah meja dan gabung pesanan</li><li><Fragment set:html={ic('check', 18)} />Ada peringatan kalau jadwal reservasi bentrok</li><li><Fragment set:html={ic('check', 18)} />Kirim konfirmasi reservasi lewat WhatsApp</li></ul></div>
+        <div class="shot"><img src={img('meja')} alt="Denah meja" loading="lazy" /></div>
+      </div>
+      <div class="show rev" id="pesan-mandiri">
+        <div class="show-t"><span class="kick">Pesan Mandiri · QR meja <em class="pro-tag">Pro ke atas</em></span><h3>Tamu pesan sendiri dari HP. Tanpa antre, tanpa salah catat.</h3>
+          <p>Tempel QR di setiap meja. Tamu cukup scan pakai kamera, pilih menu, lalu kirim — tanpa install aplikasi apa pun. Pesanan langsung masuk ke kasir dan dapur, lengkap dengan nomor mejanya.</p>
+          <ul><li><Fragment set:html={ic('check', 18)} />Bisa langsung ke dapur, atau dicek kasir dulu</li><li><Fragment set:html={ic('check', 18)} />Tamu bisa melihat pesanannya sedang dimasak, sudah siap, atau sudah diantar</li><li><Fragment set:html={ic('check', 18)} />Cetak QR saja, QR plus menu, atau lembar pesanan — ada 4 pilihan gaya</li><li><Fragment set:html={ic('check', 18)} />Harga dan menu yang habis selalu sama dengan di kasir</li></ul>
+          <p class="show-note">Karena pesanan dikirim lewat internet, fitur ini tersedia mulai paket Pro. Di paket Gratis, Anda tetap bisa mencetak menu dan lembar pesanan.</p></div>
+        <div class="shot-duo"><div class="shot"><img src={img('qr-gaya')} alt="Menu meja dengan QR dalam 4 gaya" loading="lazy" /></div><div class="shot ph"><img src={img('qr-hp-menu')} alt="Halaman pesan di HP pelanggan" loading="lazy" /></div></div>
+      </div>
+      <div class="show">
+        <div class="show-t"><span class="kick">QRIS dinamis</span><h3>Tamu scan QRIS, nominalnya sudah terisi.</h3>
+          <p>Unggah QRIS toko sekali saja. Setiap ada pembayaran, kasir menampilkan QR dengan jumlah yang sesuai tagihan — tamu tinggal scan dan masukkan PIN. Tidak ada lagi salah ketik nominal.</p>
+          <ul><li><Fragment set:html={ic('check', 18)} />Uang tetap masuk ke akun QRIS Anda sendiri, tanpa potongan dari We POS</li><li><Fragment set:html={ic('check', 18)} />QRIS ikut tercetak di tagihan meja</li><li><Fragment set:html={ic('check', 18)} />Tersedia di semua paket, termasuk Gratis</li></ul></div>
+        <div class="shot narrow"><img src={img('qris-dinamis')} alt="QRIS dinamis di layar kasir" loading="lazy" /></div>
+      </div>
+      <div class="show rev">
+        <div class="show-t"><span class="kick">Laporan</span><h3>Tutup toko, langsung tahu hari ini dapat berapa.</h3>
+          <p>Penjualan harian, jam paling ramai, menu terlaris, metode bayar, dan penjualan tiap kasir — sampai laba kotor setelah dikurangi pengeluaran. Saat tutup kasir, selisih uang di laci langsung kelihatan.</p>
+          <ul><li><Fragment set:html={ic('check', 18)} />Lihat hari ini, 7 hari terakhir, bulan ini, atau tanggal pilihan Anda</li><li><Fragment set:html={ic('check', 18)} />Unduh ke Excel atau salin ke Google Sheets</li><li><Fragment set:html={ic('check', 18)} />Riwayat tutup kasir lengkap dengan nama yang menutup</li></ul></div>
+        <div class="shot"><img src={img('laporan')} alt="Laporan" loading="lazy" /></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-h"><span class="kick">Satu akun, banyak layar</span><h2>Semua yang dibutuhkan restoran, sudah termasuk.</h2><p>Buka di HP, tablet, atau laptop. Di paket berbayar, semua perangkat tersinkron sendiri.</p></div>
+      <div class="apps">{apps.map(([i, t, d, s]) => <div class="app"><span class="ai"><Fragment set:html={ic(i, 24)} /></span><h3>{t}</h3><p>{d}</p><small>{s}</small></div>)}</div>
+    </div>
+  </section>
+
+  <section class="bg2" id="tim">
+    <div class="wrap">
+      <div class="sec-h"><span class="kick">Untuk seluruh tim</span><h2>Setiap orang hanya melihat yang ia perlukan.</h2><p>Menu yang tampil menyesuaikan peran masing-masing, jadi staf baru tidak bingung dengan tombol yang bukan urusannya.</p></div>
+      <div class="roles">
+        <div class="role"><span class="av" style="background:#c4501e">P</span><h3>Pemilik & Manajer</h3><p>Akses penuh: menu, laporan, tim, pengaturan, dan menyetujui pembatalan.</p></div>
+        <div class="role"><span class="av" style="background:#2e5677">K</span><h3>Kasir</h3><p>Menerima pesanan dan pembayaran, mencatat reservasi, dan menutup kasir.</p></div>
+        <div class="role"><span class="av" style="background:#4f7a3a">P</span><h3>Pelayan</h3><p>Mencatat pesanan di meja dari HP lalu mengirimnya ke dapur — tanpa akses ke uang.</p></div>
+        <div class="role"><span class="av" style="background:#6b3f5e">D</span><h3>Dapur</h3><p>Hanya layar dapur dan antrian, yang langsung terbuka begitu masuk.</p></div>
+      </div>
+      <div class="pinbox">
+        <div><h3>Ganti shift cukup 3 detik.</h3><p>Pemilik menghubungkan perangkat sekali saja. Setelah itu, staf tinggal ketuk nama dan masukkan PIN. Setiap transaksi tercatat atas nama yang melayani.</p><p>Untuk hal sensitif seperti membatalkan transaksi, tetap perlu PIN Manajer.</p></div>
+        <img src={img('lock')} alt="Layar pilih staf" loading="lazy" />
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="sec-h"><span class="kick">Mulai hari ini</span><h2>Siap jualan dalam 3 langkah.</h2></div>
+      <div class="steps">
+        <div class="step"><h3>Daftarkan restoran</h3><p>Isi nama restoran, nama Anda, dan PIN. Centang “isi contoh menu” supaya bisa langsung mencoba.</p></div>
+        <div class="step"><h3>Atur menu & meja</h3><p>Sesuaikan nama, harga, dan foto menu. Atur juga nomor meja, pajak, service, logo, dan QRIS toko.</p></div>
+        <div class="step"><h3>Ajak tim bergabung</h3><p>Buat PIN untuk kasir, pelayan, dan dapur, lalu buka Layar Dapur di tablet. Selesai — siap terima tamu.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="harga">
+    <div class="wrap">
+      <div class="sec-h"><span class="kick">Harga</span><h2>Mulai gratis, bayar saat usaha makin ramai.</h2><p>Harga dihitung per outlet — bukan per perangkat atau per staf. Tanpa kontrak, bisa berhenti kapan saja.</p></div>
+      <div class="bill" role="group" aria-label="Periode tagihan"><button class="on" data-bill="m">Bulanan</button><button data-bill="y">Tahunan <i>hemat 2 bulan</i></button></div>
+      <p class="promo"><b>Promo peluncuran</b> — hemat hingga 40% dari harga normal, dan harga ini tetap berlaku selama Anda berlangganan.</p>
+      <div class="plan-dots" aria-hidden="true">{plans.map((p, i) => <button data-i={i} class={p.hot ? 'on' : ''} aria-label={p.name}><span>{p.name}</span></button>)}</div>
+      <div class="plans">
+        {plans.map((p) => (
+          <div class={`plan ${p.hot ? 'hot' : ''}`}>
+            {p.hot && <span class="ribbon">Paling populer</span>}
+            {p.om && <span class="disc" data-m={`Hemat ${Math.round((1 - p.m / p.om) * 100)}%`} data-y={`Hemat ${Math.round((1 - p.y / p.oy!) * 100)}%`}>Hemat {Math.round((1 - p.m / p.om) * 100)}%</span>}
+            <h3>{p.name}</h3><p class="ptag">{p.tag}</p>
+            <div class="price">
+              {p.m === 0 ? <b>Rp0</b> : <>
+                {p.om && <s class="was" data-m={rpx(p.om)} data-y={rpx(p.oy!)}>{rpx(p.om)}</s>}
+                <b data-m={rpx(p.m)} data-y={rpx(p.y)}>{rpx(p.m)}</b>
+              </>}
+              {p.m === 0 ? <span>{p.unit}</span> : <><span data-m={p.unit} data-y="/outlet/tahun">{p.unit}</span><sup class="ast">*</sup></>}
+            </div>
+            <p class="pnote" data-m={p.note} data-y={p.m ? `Setara ${rpx(Math.round(p.y / 12))}/bulan · hemat ${rpx(p.m * 12 - p.y)}${p.k === 'korporat' ? ' · min. 2 outlet' : ''}` : p.note}>{p.note}</p>
+            <a class={`btn ${p.hot ? 'pri' : 'soft'} blk`} href={p.href}>{p.cta}</a>
+            <ul>{p.feats.map((f) => typeof f === 'string'
+              ? <li><Fragment set:html={ic('check', 17)} />{f}</li>
+              : <li class={f[0]}>{f[0] === 'x' ? <Fragment set:html={XI} /> : <Fragment set:html={ic('clock', 17)} />}{f[1]}{f[0] === 'soon' && <em>Segera</em>}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+      <div class="cmp" id="cmp">
+        <div class="cmp-h"><h3>Perbandingan fitur lengkap</h3><p>Semua paket memakai aplikasi yang sama. Bedanya ada di jumlah perangkat, sinkron online, pesan lewat QR, dan laporan keuangan.</p></div>
+        <div class="cmp-tabs" role="tablist" aria-label="Pilih paket">{plans.map((p, i) => <button class={i === 1 ? 'on' : ''} data-col={i}>{p.name}</button>)}</div>
+        <div class="cmp-wrap" data-show="1"><table>
+          <thead><tr><th class="f">Fitur</th>{plans.map((p, i) => <th class={`c${i}${p.hot ? ' hot' : ''}`}><b>{p.name}</b>{p.m ? <><s data-m={rpx(p.om!)} data-y={rpx(p.oy!)}>{rpx(p.om!)}</s><small data-m={`${rpx(p.m)}/bln`} data-y={`${rpx(p.y)}/thn`}>{rpx(p.m)}/bln</small></> : <small>Rp0</small>}</th>)}</tr></thead>
+          {compare.map(([gid, gt, rows], gi) => <tbody class={gi > 1 ? 'more' : ''}>
+            <tr class="g"><th colspan="5">{gt}</th></tr>
+            {rows.map(([f, ...vals]) => <tr><td class="f">{f}{vals[4] && <small>{vals[4]}</small>}</td>{vals.slice(0, 4).map((v, i) => <td class={`c${i} ${v === true ? 'y' : v === false || v === '–' ? 'n' : v === 'soon' ? 's' : 't'}`}>{v === true ? <Fragment set:html={ic('check', 18)} /> : v === false || v === '–' ? <span aria-label="Tidak">–</span> : v === 'soon' ? <em>Segera</em> : v}</td>)}</tr>)}
+          </tbody>)}
+        </table></div>
+        <button class="cmp-more" id="cmpMore"><span>Lihat semua fitur</span><Fragment set:html={ic('arrow', 16)} /></button>
+      </div>
+      <div class="pnotes">
+        <p><sup>*</sup> Harga belum termasuk PPN. Harga coret adalah harga normal setelah promo peluncuran berakhir; pelanggan yang sudah berlangganan tetap memakai harga promo.</p>
+        <p><sup>**</sup> Di luar perangkat (printer, tablet, HP) dan jumlah karyawan — harga tidak dihitung per staf.</p>
+        <p class="pnote-sop">Butuh panduan kerja untuk tim Anda? Lihat <a href={`${base}sop/`}>SOP operasional</a> dan <a href={`${base}panduan/`}>panduan pemakaian</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg2" id="faq">
+    <div class="wrap">
+      <div class="sec-h"><span class="kick">FAQ</span><h2>Pertanyaan yang sering muncul</h2></div>
+      <div class="faq">{faqs.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap"><div class="final">
+      <h2>Siap melayani tamu pertama?</h2>
+      <p class="flowp">Daftar gratis, pakai contoh menu, lalu coba sendiri alur kasir <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> dapur <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> bayar. Cuma butuh satu menit.</p>
+      <div class="cta"><a class="btn white lg" href={`${app}?daftar`}>Coba gratis sekarang</a><a class="btn line lg" href={`${base}panduan/`}>Baca panduan</a></div>
+    </div></div>
+  </section>
+  <script is:inline>
+    document.querySelectorAll('[data-bill]').forEach((b) => b.addEventListener('click', () => {
+      const k = b.dataset.bill; document.querySelectorAll('[data-bill]').forEach((x) => x.classList.toggle('on', x === b));
+      document.querySelectorAll('.plans [data-m], .cmp [data-m]').forEach((el) => (el.textContent = el.dataset[k]));
+    }));
+    const pl = document.querySelector('.plans'), cards = [...pl.children], dots = [...document.querySelectorAll('.plan-dots button')];
+    const mobile = () => getComputedStyle(pl).display === 'flex';
+    const goCard = (i, smooth) => pl.scrollTo({ left: cards[i].offsetLeft - (pl.clientWidth - cards[i].offsetWidth) / 2, behavior: smooth ? 'smooth' : 'auto' });
+    if (mobile()) { const h = cards.findIndex((c) => c.classList.contains('hot')); if (h > 0) goCard(h, false); }
+    dots.forEach((d) => d.addEventListener('click', () => goCard(+d.dataset.i, true)));
+    let raf = 0; pl.addEventListener('scroll', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => {
+      const mid = pl.scrollLeft + pl.clientWidth / 2; let best = 0, bd = 1e9;
+      cards.forEach((c, i) => { const d = Math.abs(c.offsetLeft + c.offsetWidth / 2 - mid); if (d < bd) { bd = d; best = i; } });
+      dots.forEach((d, i) => d.classList.toggle('on', i === best)); }); }, { passive: true });
+    const cw = document.querySelector('.cmp-wrap'), more = document.getElementById('cmpMore');
+    more.addEventListener('click', () => { const open = cw.classList.toggle('all'); more.classList.toggle('open', open); more.querySelector('span').textContent = open ? 'Ringkas' : 'Lihat semua fitur'; if (!open) document.getElementById('cmp').scrollIntoView({ block: 'start' }); });
+    document.querySelectorAll('.cmp-tabs button').forEach((b) => b.addEventListener('click', () => { document.querySelectorAll('.cmp-tabs button').forEach((x) => x.classList.toggle('on', x === b)); cw.dataset.show = b.dataset.col; }));
+  </script>
+</SiteLayout>

@@ -1,0 +1,252 @@
+---
+import '@fontsource/plus-jakarta-sans/latin-400.css';
+import '@fontsource/plus-jakarta-sans/latin-500.css';
+import '@fontsource/plus-jakarta-sans/latin-600.css';
+import '@fontsource/plus-jakarta-sans/latin-700.css';
+import '@fontsource/plus-jakarta-sans/latin-800.css';
+import '../styles/site.css';
+import Umami from '../components/Umami.astro';
+
+const base = import.meta.env.BASE_URL;
+const app = `${base}app/`;
+const img = (n: string) => `${base}landing-${n}.webp`;
+
+const ic = {
+  kasir: '<path d="M4 3h16v18l-3-2-3 2-2-2-2 2-3-2-3 2zM8 8h8M8 12h8M8 16h4"/>',
+  status: '<path d="M6 16V10a6 6 0 0 1 12 0v6l2 2H4zM10 21h4"/>',
+  wa: '<path d="M21 12a9 9 0 0 1-13.5 7.8L3 21l1.2-4.5A9 9 0 1 1 21 12z"/>',
+  users: '<path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a7 7 0 0 0-4-6.3"/>',
+  wallet: '<path d="M3 6h16v14H3zM3 6l13-3v3M15 13h2"/>',
+  sheet: '<path d="M4 3h16v18H4zM4 9h16M4 15h16M10 3v18"/>',
+  shield: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  offline: '<path d="M2 8.8a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 20h.01"/>',
+  palette: '<path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.5 0-1.2-1-1.5-1-2.5s.8-1.5 2-1.5H17a4 4 0 0 0 4-4c0-4.7-4-8.5-9-8.5z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7" r="1"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  store: '<path d="M3 9l2-6h14l2 6M3 9v12h18V9M3 9h18M9 21v-6h6v6"/>',
+  phone: '<path d="M7 2h10v20H7zM11 18h2"/>',
+};
+const ar = '<svg class="ar" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+const svg = (k: keyof typeof ic, s = 22) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ic[k]}</svg>`;
+
+const features = [
+  { i: 'kasir', t: 'Kasir super cepat', d: 'Kiloan, satuan, sepatu, karpet. Express, diskon, DP atau lunas — order jadi dalam hitungan detik.' },
+  { i: 'status', t: 'Lacak status cucian', d: `Diterima ${ar} Dicuci ${ar} Disetrika ${ar} Siap Diambil ${ar} Diambil. Order terlambat langsung ketahuan.` },
+  { i: 'wa', t: 'Nota WhatsApp & cetak', d: 'Kirim nota dan kabar “cucian siap diambil” ke WhatsApp pelanggan sekali ketuk, atau cetak struk.' },
+  { i: 'users', t: 'Akun kasir & jejak aktivitas', d: 'Tiap kasir punya akun sendiri. Setiap order, pembayaran & perubahan status tercatat siapa pelakunya.' },
+  { i: 'wallet', t: 'Keuangan beres', d: 'Pemasukan per metode (tunai, transfer, QRIS), pengeluaran, laba bersih, dan daftar piutang.' },
+  { i: 'sheet', t: 'Export Excel & Google Sheets', d: 'Unduh laporan Excel multi-sheet, CSV, atau salin langsung ke Google Sheets untuk pembukuan.' },
+  { i: 'offline', t: 'Tetap jalan saat offline', d: 'Sinyal hilang? Kasir tetap bisa mencatat. Bisa di-install di layar utama HP seperti aplikasi biasa.' },
+  { i: 'palette', t: 'Pakai brand laundry Anda', d: 'Nama, logo, slogan & warna tema sendiri — tampil di aplikasi, nota, dan pesan WhatsApp.' },
+] as const;
+
+const steps = [
+  { t: 'Daftar laundry', d: 'Isi nama laundry dan akun pemilik. Selesai dalam 1 menit, harga layanan contoh langsung tersedia.' },
+  { t: 'Atur harga & tim', d: 'Sesuaikan layanan dan harga, pasang logo, lalu buat akun untuk kasir Anda.' },
+  { t: 'Mulai catat order', d: 'Terima cucian, kirim nota WA, update status, dan pantau omzet harian dari HP.' },
+];
+
+const faqs = [
+  { q: 'Perlu install aplikasi dari Play Store?', a: 'Tidak perlu. Fara Wash berjalan di browser HP, dan bisa di-install ke layar utama (PWA) lewat menu “Tambahkan ke Layar Utama” sehingga terasa seperti aplikasi biasa.' },
+  { q: 'Bagaimana cara kasir masuk?', a: 'Pemilik membuat akun kasir di menu Tim & Akses. Kasir masuk dengan nama laundry yang sama ditambah akunnya sendiri, sehingga semua aktivitasnya tercatat.' },
+  { q: 'Apa yang bisa dilakukan kasir?', a: 'Kasir bisa membuat order, menambah pelanggan, mengubah status cucian, dan menerima pembayaran. Menu Keuangan, Export, Pengaturan, dan Tim hanya untuk Pemilik/Admin.' },
+  { q: 'Kalau internet mati bagaimana?', a: 'Aplikasi tetap bisa dipakai. Data disimpan di perangkat terlebih dahulu, dan pada mode sinkron cloud akan dikirim otomatis saat online kembali.' },
+  { q: 'Bisa dipakai untuk lebih dari satu laundry?', a: 'Bisa. Setiap laundry punya data, harga, dan tim sendiri yang terpisah. Cukup daftar laundry baru lalu masuk dengan nama laundry tersebut.' },
+  { q: 'Bagaimana dengan pembukuan?', a: 'Laporan bisa diunduh sebagai Excel (tiap data jadi sheet terpisah), CSV, atau disalin ke Google Sheets — tinggal pilih periodenya.' },
+];
+---
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Fara Wash — Aplikasi Kasir Laundry di HP</title>
+  <meta name="description" content="Fara Wash: aplikasi kasir laundry di HP. Catat order, lacak status cucian, kirim nota WhatsApp, kelola kasir & keuangan. Bisa offline dan di-install di layar utama." />
+  <meta name="theme-color" content="#2563eb" />
+  <meta property="og:title" content="Fara Wash — Aplikasi Kasir Laundry di HP" />
+  <meta property="og:description" content="Catat order, lacak cucian, nota WhatsApp, akun kasir & laporan keuangan — semua dari HP." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content={img('home')} />
+  <link rel="manifest" href={`${base}manifest.webmanifest`} />
+  <link rel="icon" type="image/png" sizes="192x192" href={`${base}icons/icon-192.png`} />
+  <link rel="apple-touch-icon" href={`${base}icons/apple-touch-icon.png`} />
+  <Umami />
+  <script is:inline>
+    // Dibuka dari ikon aplikasi (PWA terpasang) → langsung ke aplikasi
+    if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) location.replace('app/');
+  </script>
+</head>
+<body>
+  <header class="nav" id="nav">
+    <div class="wrap navin">
+      <a class="brand" data-umami-event="landing-logo" data-umami-event-lokasi="header" href="#top"><img src={`${base}icons/icon-192.png`} alt="" width="34" height="34" /><span>Fara Wash</span></a>
+      <nav class="links"><a data-umami-event="landing-nav" data-umami-event-lokasi="fitur" href="#fitur">Fitur</a><a data-umami-event="landing-nav" data-umami-event-lokasi="cara-kerja" href="#cara">Cara kerja</a><a data-umami-event="landing-nav" data-umami-event-lokasi="tampilan" href="#tampilan">Tampilan</a><a data-umami-event="buka-panduan" data-umami-event-lokasi="landing-header" href={`${base}panduan/`}>Panduan</a><a data-umami-event="landing-nav" data-umami-event-lokasi="faq" href="#faq">FAQ</a></nav>
+      <div class="navbtn">
+        <a class="btn ghost" data-auth data-umami-event="klik-masuk" data-umami-event-lokasi="landing-header" href={`${app}?masuk`}>Masuk</a>
+        <a class="btn pri" data-reg data-umami-event="klik-daftar" data-umami-event-lokasi="landing-header" href={`${app}?daftar`}>Daftar</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="blob b1"></div><div class="blob b2"></div>
+      <div class="wrap herogrid">
+        <div class="herotxt reveal">
+          <span class="pill"><span class="dot"></span> Aplikasi kasir laundry untuk HP</span>
+          <h1>Laundry makin rapi,<br /><span class="grad">order nggak ada yang nyelip.</span></h1>
+          <p class="lead">Catat order, lacak status cucian, kirim nota WhatsApp, dan pantau omzet — semua tercatat sesuai laundry & akun Anda.</p>
+          <div class="cta">
+            <a class="btn pri lg" data-reg data-umami-event="klik-daftar" data-umami-event-lokasi="landing-hero" href={`${app}?daftar`}>Daftar Laundry <Fragment set:html={svg('arrow', 18)} /></a>
+            <a class="btn soft lg" data-auth data-umami-event="klik-masuk" data-umami-event-lokasi="landing-hero" href={`${app}?masuk`}>Sudah punya akun? Masuk</a>
+          </div>
+          <ul class="ticks">
+            <li><Fragment set:html={svg('check', 16)} />Tanpa install dari Play Store</li>
+            <li><Fragment set:html={svg('check', 16)} />Bisa offline</li>
+            <li><Fragment set:html={svg('check', 16)} />Akun untuk tiap kasir</li>
+          </ul>
+        </div>
+        <div class="heroart reveal">
+          <div class="phone main"><img src={img('home')} alt="Tampilan beranda Fara Wash: pemasukan hari ini, aksi cepat dan grafik" width="585" height="1266" /></div>
+          <div class="phone back"><img src={img('kasir')} alt="Tampilan kasir: memilih layanan dan jumlah" width="585" height="1266" loading="lazy" /></div>
+          <div class="float f1"><span class="fi ok"><Fragment set:html={svg('check', 16)} /></span><div><b>Order tersimpan</b><small>Nota terkirim ke WhatsApp</small></div></div>
+          <div class="float f2"><span class="fi warn"><Fragment set:html={svg('status', 16)} /></span><div><b>Siap diambil</b><small>Pelanggan dikabari otomatis</small></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MASALAH → SOLUSI -->
+    <section class="pain">
+      <div class="wrap">
+        <div class="paingrid reveal">
+          <div class="pc"><span>📝</span><b>Nota kertas hilang</b><small><Fragment set:html={ar} />Nota digital di WhatsApp pelanggan</small></div>
+          <div class="pc"><span>🧺</span><b>Lupa cucian milik siapa</b><small><Fragment set:html={ar} />Status & riwayat tiap order</small></div>
+          <div class="pc"><span>💸</span><b>Piutang menumpuk</b><small><Fragment set:html={ar} />Daftar belum lunas otomatis</small></div>
+          <div class="pc"><span>🤷</span><b>Siapa yang input?</b><small><Fragment set:html={ar} />Jejak aktivitas per kasir</small></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FITUR -->
+    <section id="fitur" class="sec">
+      <div class="wrap">
+        <div class="head reveal"><span class="eyebrow">Fitur</span><h2>Semua yang dibutuhkan laundry, dalam satu aplikasi</h2><p>Dirancang untuk dipakai sambil berdiri di meja kasir — tombol besar, alur singkat, ramah jempol.</p></div>
+        <div class="fgrid">
+          {features.map((f) => (
+            <div class="fcard reveal"><span class="fic" set:html={svg(f.i as any, 22)} /><h3>{f.t}</h3><p set:html={f.d} /></div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- AKUN & LAUNDRY -->
+    <section class="sec alt">
+      <div class="wrap split">
+        <div class="reveal">
+          <span class="eyebrow">Akun & laundry</span>
+          <h2>Masuk pakai nama laundry + akun Anda</h2>
+          <p class="muted">Setiap laundry punya ruang datanya sendiri. Pemilik dan kasir masuk dengan nama laundry yang sama, tapi akun berbeda — jadi semua tercatat rapi dan bisa dilacak.</p>
+          <ul class="list">
+            <li><b>Pemilik / Admin</b> — akses penuh: keuangan, export, pengaturan, kelola tim.</li>
+            <li><b>Kasir</b> — buat order, pelanggan, ubah status & terima pembayaran.</li>
+            <li><b>Riwayat jelas</b> — “Dibuat oleh Rina, 09.12 · Dibayar QRIS ke Andi”.</li>
+          </ul>
+          <a class="btn pri" data-reg data-umami-event="klik-daftar" data-umami-event-lokasi="landing-akun" href={`${app}?daftar`}>Daftarkan laundry Anda <Fragment set:html={svg('arrow', 16)} /></a>
+        </div>
+        <div class="authmock reveal">
+          <div class="am-card">
+            <div class="am-logo" set:html={svg('store', 22)} />
+            <b class="am-t">Masuk</b>
+            <label>Nama laundry</label><div class="am-in">Bersih Kilat Laundry</div>
+            <label>Username</label><div class="am-in">rina</div>
+            <label>Password</label><div class="am-in">••••••••</div>
+            <div class="am-btn">Masuk</div>
+          </div>
+          <div class="am-badge"><span set:html={svg('shield', 16)} /> Password tersimpan ter-enkripsi (hash)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARA KERJA -->
+    <section id="cara" class="sec">
+      <div class="wrap">
+        <div class="head reveal"><span class="eyebrow">Cara kerja</span><h2>Mulai dalam 3 langkah</h2><p>Butuh langkah lengkap? Baca <a data-umami-event="buka-panduan" data-umami-event-lokasi="landing-cara-kerja" href={`${base}panduan/`} style="color:var(--pri);font-weight:700">panduan penggunaan</a>.</p></div>
+        <div class="steps">
+          {steps.map((s, i) => (
+            <div class="step reveal"><span class="num">{i + 1}</span><h3>{s.t}</h3><p>{s.d}</p></div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- TAMPILAN -->
+    <section id="tampilan" class="sec alt">
+      <div class="wrap">
+        <div class="head reveal"><span class="eyebrow">Tampilan</span><h2>Ringkas, segar, dan enak dipakai</h2><p>Warna tema mengikuti brand laundry Anda.</p></div>
+        <div class="gallery reveal">
+          {[['home', 'Beranda', 'Omzet hari ini & aksi cepat'], ['kasir', 'Kasir', 'Pilih layanan, jumlah & bayar'], ['detail', 'Detail order', 'Status, nota WA & cetak'], ['keuangan', 'Keuangan', 'Laba, metode bayar & piutang'], ['order', 'Daftar order', 'Filter status & cari cepat']].map(([k, t, d]) => (
+            <figure class="shot"><div class="phone sm"><img src={img(k)} alt={`Tampilan ${t}`} width="585" height="1266" loading="lazy" /></div><figcaption><b>{t}</b><small>{d}</small></figcaption></figure>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="sec">
+      <div class="wrap narrow">
+        <div class="head reveal"><span class="eyebrow">FAQ</span><h2>Pertanyaan yang sering ditanyakan</h2></div>
+        <div class="faq">
+          {faqs.map((f, i) => (
+            <details class="reveal" open={i === 0}><summary>{f.q}<span class="plus" /></summary><p>{f.a}</p></details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="final">
+      <div class="wrap">
+        <div class="finalbox reveal">
+          <div>
+            <h2>Siap bikin laundry Anda lebih rapi?</h2>
+            <p>Daftarkan laundry, buat akun kasir, dan mulai catat order hari ini.</p>
+          </div>
+          <div class="cta">
+            <a class="btn white lg" data-reg data-umami-event="klik-daftar" data-umami-event-lokasi="landing-cta-akhir" href={`${app}?daftar`}>Daftar Laundry <Fragment set:html={svg('arrow', 18)} /></a>
+            <a class="btn outline lg" data-auth data-umami-event="klik-masuk" data-umami-event-lokasi="landing-cta-akhir" href={`${app}?masuk`}>Masuk</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap footin">
+      <a class="brand" href="#top"><img src={`${base}icons/icon-192.png`} alt="" width="28" height="28" /><span>Fara Wash</span></a>
+      <nav><a href="#fitur">Fitur</a><a href="#cara">Cara kerja</a><a data-umami-event="buka-panduan" data-umami-event-lokasi="landing-footer" href={`${base}panduan/`}>Panduan</a><a href="#faq">FAQ</a><a data-umami-event="klik-masuk" data-umami-event-lokasi="landing-footer" data-auth href={`${app}?masuk`}>Masuk</a></nav>
+      <small>© {new Date().getFullYear()} Fara Wash · Aplikasi kasir laundry</small>
+    </div>
+  </footer>
+
+  <div class="mbar" id="mbar"><a class="btn pri lg" data-reg data-umami-event="klik-daftar" data-umami-event-lokasi="landing-mobile-bar" href={`${app}?daftar`}>Daftar Laundry</a><a class="btn soft lg" data-auth data-umami-event="klik-masuk" data-umami-event-lokasi="landing-mobile-bar" href={`${app}?masuk`}>Masuk</a></div>
+
+  <script>
+    // Sudah pernah masuk di perangkat ini → tombol jadi "Buka Aplikasi"
+    const loggedIn = !!localStorage.getItem('fw_session') || Object.keys(localStorage).some((k) => k.startsWith('fw_realm_'));
+    if (loggedIn) {
+      document.querySelectorAll<HTMLAnchorElement>('[data-auth]').forEach((a) => { a.href = 'app/'; a.textContent = 'Buka Aplikasi'; });
+    }
+    // Header berbayang saat di-scroll + tombol bawah (HP)
+    const nav = document.getElementById('nav')!, mbar = document.getElementById('mbar')!;
+    const onScroll = () => { nav.classList.toggle('scrolled', scrollY > 8); mbar.classList.toggle('show', scrollY > 520); };
+    addEventListener('scroll', onScroll, { passive: true }); onScroll();
+    // Animasi muncul
+    const io = 'IntersectionObserver' in window ? new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io!.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' }) : null;
+    document.querySelectorAll('.reveal').forEach((el) => (io ? io.observe(el) : el.classList.add('in')));
+    // Service worker (offline) bila tersedia
+    if ('serviceWorker' in navigator && import.meta.env.PROD) addEventListener('load', () => navigator.serviceWorker.register(import.meta.env.BASE_URL + 'sw.js').catch(() => {}));
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+---
+// Umami analytics + session replay (hanya di build produksi, tidak saat `npm run dev`).
+// Pengaturan replay (sample rate, mask level, block selector) diatur di dashboard Umami:
+// Websites → Edit → Replays & Heatmaps.
+const UMAMI = 'https://umami-production-3881.up.railway.app';
+const WEBSITE_ID = '216ff29f-6787-4bd9-81d8-0387f195099a';
+const prod = import.meta.env.PROD;
+---
+{prod && (
+  <>
+    <script is:inline defer src={`${UMAMI}/script.js`} data-website-id={WEBSITE_ID} data-domains="fara-wash.vercel.app"></script>
+    <script is:inline defer src={`${UMAMI}/recorder.js`} data-website-id={WEBSITE_ID}></script>
+  </>
+)}

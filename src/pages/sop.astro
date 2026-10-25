@@ -1,0 +1,135 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+const base = import.meta.env.BASE_URL;
+const G = (id: string) => `${base}panduan/#${id}`; // tautan ke bab panduan
+const AR = '<svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+const m = (s: string) => s.replaceAll(' > ', ` ${AR} `).replaceAll(' → ', ` ${AR} `); // "Lainnya > Tutup Kasir" → ikon panah
+
+type Sop = { id: string; code: string; title: string; who: string; when: string; goal: string; steps: string[]; done: string[]; warn?: string[]; guide?: [string, string][] };
+
+/* ================= SOP RESTORAN (pemilik & staf) ================= */
+const resto: Sop[] = [
+  { id: 'r01', code: 'R-01', title: 'Persiapan buka toko', who: 'Pemilik / Kasir', when: '15–30 menit sebelum buka', goal: 'Semua perangkat siap sehingga pesanan pertama bisa langsung dilayani.',
+    steps: ['Nyalakan HP/tablet kasir, tablet dapur, dan printer. Pastikan baterai di atas 50% atau tersambung charger.', 'Buka We POS, ketuk nama Anda, masukkan PIN.', 'Periksa titik status sinkron di kanan atas: <b>hijau</b> = tersinkron. Bila abu-abu (offline), tetap boleh jualan.',
+      m('Buka <b>Menu</b>, tandai menu yang hari ini <b>Habis</b>.'), 'Di tablet dapur buka <b>Dapur</b> dan ketuk pengingat kuning <b>Aktifkan suara</b> sampai bunyi contoh terdengar.', 'Cek kertas printer dan coba cetak satu struk/tagihan bila perlu.',
+      'Buka <b>Reservasi</b> hari ini, siapkan meja untuk tamu yang sudah memesan.', 'Siapkan uang kembalian di laci dan catat jumlahnya (dipakai saat Tutup Kasir sebagai <i>modal awal</i>).'],
+    done: ['Semua perangkat menyala & sudah masuk PIN', 'Menu habis sudah ditandai', 'Suara dapur aktif', 'Modal awal dihitung & dicatat'], guide: [['pin', 'Masuk dengan PIN'], ['dapur', 'Layar Dapur']] },
+  { id: 'r02', code: 'R-02', title: 'Menerima pesanan makan di tempat', who: 'Kasir / Pelayan', when: 'Setiap tamu duduk & memesan', goal: 'Pesanan tercatat per meja dan langsung sampai ke dapur tanpa salah.',
+    steps: ['Buka <b>Kasir</b>, pastikan pilihan <b>Makan di sini</b> aktif.', 'Ketuk <b>Pilih meja</b> lalu nomor meja tamu (atau ketuk meja kosong di halaman <b>Meja</b>).', 'Ketuk menu yang dipesan. Ketuk lagi untuk menambah jumlah.',
+      'Untuk permintaan khusus, ketuk nama item di keranjang → tulis/ketuk catatan (pedas, tanpa es, dll.).', 'Bacakan ulang pesanan kepada tamu.', 'Ketuk <b>Kirim ke Dapur</b>.'],
+    done: ['Meja berubah warna menjadi terisi', 'Tiket muncul di layar dapur', 'Catatan khusus terbaca di tiket'], warn: ['Jangan menunda “Kirim ke Dapur” — dapur menghitung waktu sejak tiket dikirim.', 'Tambahan pesanan dari meja yang sama: gunakan <b>Tambah item</b>, bukan pesanan baru.'], guide: [['kasir', 'Menerima pesanan']] },
+  { id: 'r03', code: 'R-03', title: 'Pesanan bawa pulang', who: 'Kasir', when: 'Tamu memesan untuk dibawa', goal: 'Pesanan dibayar di depan dan pelanggan mudah dipanggil saat siap.',
+    steps: ['Di <b>Kasir</b> pilih <b>Bawa pulang</b>.', 'Isi nama pemesan.', 'Ketuk menu, lalu <b>Bayar</b> (pesanan otomatis terkirim ke dapur).', 'Sebutkan nomor antrian (#) di struk kepada pelanggan.', 'Saat dapur selesai, nomor tampil di <b>Layar Antrian</b> → serahkan pesanan → ketuk <b>Sudah diantar</b>.'],
+    done: ['Struk berisi nomor antrian', 'Pesanan ditandai sudah diambil'], guide: [['antrian', 'Layar Antrian']] },
+  { id: 'r04', code: 'R-04', title: 'Pesanan dari QR meja & lembar pesanan kertas', who: 'Kasir', when: 'Pelanggan pesan sendiri', goal: 'Pesanan mandiri diproses cepat dan tidak ada yang terlewat.',
+    steps: ['<b>QR (paket Pro ke atas):</b> pesanan muncul dengan bunyi + tombol <b>Pesanan QR</b> di atas layar.', 'Bila mode <i>Konfirmasi kasir</i>: buka <b>Pesanan QR</b>, periksa isinya, ketuk <b>Terima</b> (masuk dapur) atau <b>Tolak</b> lalu datangi meja.',
+      '<b>Lembar kertas:</b> terima lembar dari pelanggan, cek nomor meja, input di <b>Kasir</b> seperti R-02, lalu simpan/buang lembar sesuai kebijakan toko.', 'Ganti lembar pesanan baru di meja setelah dipakai.'],
+    done: ['Tidak ada tombol “Pesanan QR” yang menunggu lebih dari 2 menit', 'Lembar di meja selalu tersedia'], warn: ['QR yang hilang/rusak: cetak ulang dari Menu > Cetak menu meja.'], guide: [['kasir', 'Menerima pesanan']] },
+  { id: 'r05', code: 'R-05', title: 'Mengolah tiket di dapur', who: 'Dapur / Bar', when: 'Sepanjang jam buka', goal: 'Pesanan dikerjakan berurutan dan tepat waktu.',
+    steps: ['Kerjakan tiket dari kiri (paling lama) ke kanan.', 'Perhatikan warna: <b>hijau</b> &lt; 10 menit, <b>kuning</b> 10–20 menit, <b>merah</b> &gt; 20 menit — dahulukan yang merah.', 'Baca catatan merah di bawah nama menu sebelum memasak.',
+      'Ketuk item yang sudah jadi (dicoret). Bila semua item siap, ketuk <b>Selesai</b>.', 'Salah tekan? Ketuk nomornya di baris <b>Siap diantar</b> untuk mengembalikan.'],
+    done: ['Tidak ada tiket merah tanpa alasan', 'Setiap tiket ditutup dengan “Selesai”'], warn: ['Menu bahan habis: segera kabari kasir agar ditandai Habis.'], guide: [['dapur', 'Layar Dapur']] },
+  { id: 'r06', code: 'R-06', title: 'Mengantar pesanan', who: 'Pelayan', when: 'Lonceng hijau muncul', goal: 'Makanan siap segera sampai ke meja yang benar.',
+    steps: ['Saat lonceng hijau 🔔 muncul, ketuk untuk melihat pesanan yang siap.', 'Ambil pesanan dari dapur, cocokkan nomor meja/nomor pesanan.', 'Antar ke meja, sebutkan nama menu.', 'Ketuk <b>Sudah diantar</b>.'],
+    done: ['Lonceng kembali hilang setelah semua diantar'], guide: [['antar', 'Siap diantar']] },
+  { id: 'r07', code: 'R-07', title: 'Pembayaran & struk', who: 'Kasir', when: 'Tamu minta tagihan', goal: 'Pembayaran tercatat benar sesuai metode dan uang kembalian tepat.',
+    steps: ['Dari <b>Meja</b> ketuk meja → <b>Cetak tagihan</b> bila tamu ingin melihat dulu.', 'Ketuk <b>Bayar</b>, pilih metode: Tunai / QRIS / Transfer / Kartu. QRIS dinamis menampilkan QR dengan nominal tagihan sudah terisi.', 'Tunai: ketik uang diterima atau ketuk nominal cepat; serahkan <b>kembalian</b> sesuai layar.',
+      'Non-tunai: pastikan dana sudah masuk (cek notifikasi QRIS/mutasi) <b>sebelum</b> Konfirmasi Bayar.', 'Ketuk <b>Konfirmasi Bayar</b>, lalu <b>Cetak struk</b> atau <b>Kirim WA</b>.'],
+    done: ['Meja kembali kosong', 'Metode bayar sesuai uang yang diterima'], warn: ['Jangan konfirmasi QRIS/transfer hanya dari tangkapan layar pelanggan.'], guide: [['bayar', 'Pembayaran & struk'], ['qris', 'QRIS dinamis']] },
+  { id: 'r08', code: 'R-08', title: 'Pembatalan & koreksi', who: 'Kasir + Manajer/Pemilik', when: 'Salah input, tamu batal, refund', goal: 'Setiap pembatalan sah, beralasan, dan tercatat.',
+    steps: ['Belum dikirim ke dapur: kurangi/hapus langsung di keranjang.', 'Sudah dikirim: buka <b>Pesanan</b> → pesanan → ketuk <b>×</b> pada item → minta <b>PIN Manajer</b>.', 'Batalkan seluruh pesanan/transaksi lunas: <b>Batalkan pesanan</b> / <b>Batalkan transaksi</b>, isi alasan jelas, minta PIN Manajer.', 'Kabari dapur bila item sudah mulai dimasak.'],
+    done: ['Alasan tertulis', 'Disetujui PIN Manajer'], warn: ['PIN Manajer tidak boleh dibagikan ke kasir.'], guide: [['pesanan', 'Pesanan & pembatalan']] },
+  { id: 'r09', code: 'R-09', title: 'Reservasi', who: 'Kasir / Pelayan', when: 'Tamu memesan tempat via telepon/WA', goal: 'Tidak ada meja dobel dan tamu disambut tepat waktu.',
+    steps: ['Buka <b>Reservasi</b> → <b>+ Reservasi</b>: nama, nomor WA, tanggal, jam, jumlah orang, meja.', 'Perhatikan peringatan meja bentrok (±2 jam).', 'Kirim konfirmasi lewat tombol WhatsApp.', 'Saat tamu datang, ketuk <b>Tamu datang</b> → catat pesanan.', 'Tamu tidak datang 30 menit: ubah status <b>Tidak datang</b>.'],
+    done: ['Reservasi hari ini terlihat di denah meja (kuning)'], guide: [['reservasi', 'Reservasi']] },
+  { id: 'r10', code: 'R-10', title: 'Ganti shift', who: 'Semua staf', when: 'Pergantian shift / meninggalkan perangkat', goal: 'Setiap transaksi tercatat atas nama yang benar.',
+    steps: ['Ketuk foto profil → <b>Kunci / Ganti pengguna</b> (atau tombol <b>Kunci</b> di Lainnya).', 'Staf berikutnya ketuk namanya dan masukkan PIN.', 'Serah terima: sebutkan meja yang masih terisi & pesanan QR yang menunggu.', 'Bila uang laci ikut berpindah tangan, lakukan Tutup Kasir (R-11) dulu.'],
+    done: ['Tidak ada staf memakai akun orang lain'], warn: ['Jangan meninggalkan perangkat dalam keadaan masuk.'], guide: [['pin', 'Masuk dengan PIN & ganti shift']] },
+  { id: 'r11', code: 'R-11', title: 'Tutup kasir & tutup toko', who: 'Kasir / Pemilik', when: 'Akhir shift / akhir hari', goal: 'Uang di laci cocok dengan catatan dan selisih diketahui hari itu juga.',
+    steps: ['Pastikan semua meja sudah dibayar (<b>Tagihan terbuka</b> kosong) atau dicatat alasannya.', m('Catat belanja kecil yang dibayar dari laci di Lainnya > Tutup Kasir > <b>Catat pengeluaran</b>.'), m('Buka Lainnya > <b>Tutup Kasir</b>, isi <b>Modal awal</b> dan <b>Uang fisik di laci</b>.'),
+      'Periksa selisih. Bila ada, hitung ulang; bila tetap, tulis penjelasan di catatan.', 'Ketuk <b>Tutup Kasir</b> lalu <b>Cetak</b>, tanda tangani dan simpan bersama uang.', 'Matikan printer, isi daya perangkat, kunci aplikasi.'],
+    done: ['Laporan tutup kasir tercetak', 'Selisih = 0 atau ada penjelasan'], guide: [['tutup', 'Tutup Kasir']] },
+  { id: 'r12', code: 'R-12', title: 'Mengubah menu & harga', who: 'Pemilik / Manajer', when: 'Menu baru, harga naik/turun', goal: 'Harga di aplikasi, menu meja, dan QR selalu sama.',
+    steps: ['Buka <b>Menu</b> → ubah harga/nama/foto, atau <b>+ Menu</b> untuk menu baru.', 'Atur kategori dan tempat dibuat (Dapur/Bar).', m('Cetak ulang menu meja: Menu > <b>Cetak menu meja</b> → pratinjau → cetak.'), 'Ganti lembar lama di semua meja. Menu QR berubah otomatis.'],
+    done: ['Menu cetak di meja = harga di aplikasi'], guide: [['menu', 'Menu & kategori']] },
+  { id: 'r13', code: 'R-13', title: 'Staf baru, keluar & keamanan PIN', who: 'Pemilik', when: 'Staf masuk/keluar, PIN bocor', goal: 'Hanya staf aktif yang bisa masuk, sesuai perannya.',
+    steps: [m('Staf baru: Lainnya > Tim & PIN > <b>+ Staf</b>, pilih peran (Kasir/Pelayan/Dapur/Manajer), buat PIN.'), 'Minta staf mengganti PIN sendiri di <b>Ganti PIN saya</b>.', 'Staf keluar: hari itu juga <b>nonaktifkan</b> atau hapus akunnya.', 'PIN dicurigai bocor: ganti PIN staf tersebut.', 'Simpan kode pemulihan pemilik di tempat aman.'],
+    done: ['Daftar staf aktif sesuai kondisi nyata'], warn: ['Jangan memberi peran Manajer hanya agar kasir bisa membatalkan transaksi.'], guide: [['tim', 'Tim, peran & PIN']] },
+  { id: 'r14', code: 'R-14', title: 'Laporan & backup berkala', who: 'Pemilik', when: 'Harian, mingguan, bulanan', goal: 'Pemilik tahu kondisi usaha dan data aman.',
+    steps: ['<b>Harian</b>: cek Laporan hari ini & riwayat tutup kasir.', '<b>Mingguan</b>: lihat menu terlaris & jam ramai untuk atur stok dan jadwal staf.', '<b>Bulanan</b>: catat semua pengeluaran, cek laba kotor, ekspor Excel untuk pembukuan.',
+      m('Mode lokal/paket Gratis: <b>Backup</b> mingguan (Lainnya > Backup & Pulihkan) dan simpan file di luar perangkat.')],
+    done: ['File ekspor/backup bulan ini tersimpan'], guide: [['laporan', 'Laporan & pengeluaran'], ['ekspor', 'Ekspor & backup']] },
+  { id: 'r15', code: 'R-15', title: 'Saat terjadi gangguan', who: 'Semua staf', when: 'Internet, printer, atau perangkat bermasalah', goal: 'Penjualan tetap berjalan walau ada gangguan.',
+    steps: ['<b>Internet mati</b>: lanjut jualan seperti biasa; data tersinkron otomatis saat online. Jangan logout/putuskan perangkat.', '<b>Printer mati</b>: kirim struk via WhatsApp atau tunjukkan layar; dapur tetap memakai layar dapur.',
+      '<b>Tablet dapur mati</b>: kasir cetak <b>Tiket dapur</b> dari detail pesanan sampai tablet kembali.', '<b>Perangkat rusak/hilang</b>: pakai perangkat lain, hubungkan dengan email pemilik; pemilik memutuskan perangkat yang hilang dan mengganti PIN.', 'Catat kejadian & jam, laporkan ke pemilik / dukungan We POS.'],
+    done: ['Tidak ada pesanan yang hilang selama gangguan'], guide: [['masalah', 'Masalah umum']] },
+];
+
+/* Kelompok waktu & peran untuk navigasi dan filter */
+const PHASES: [string, string, string[]][] = [
+  ['buka', 'Sebelum buka', ['r01']],
+  ['jualan', 'Selama jualan', ['r02', 'r03', 'r04', 'r05', 'r06', 'r07', 'r08', 'r09', 'r10']],
+  ['tutup', 'Tutup toko', ['r11']],
+  ['kelola', 'Pengelolaan', ['r12', 'r13', 'r14']],
+  ['darurat', 'Darurat', ['r15']],
+];
+const ROLES: [string, string][] = [['kasir', 'Kasir'], ['pelayan', 'Pelayan'], ['dapur', 'Dapur'], ['pemilik', 'Pemilik / Manajer']];
+const roleOf = (who: string) => { const w = who.toLowerCase(); if (w.includes('semua')) return ROLES.map((r) => r[0]).join(' '); return ROLES.filter(([k]) => k === 'pemilik' ? /pemilik|manajer/.test(w) : w.includes(k)).map((r) => r[0]).join(' '); };
+const byId = Object.fromEntries(resto.map((x) => [x.id, x]));
+const phaseOf = (id: string) => PHASES.find((p) => p[2].includes(id))?.[1] || '';
+---
+<SiteLayout title="SOP Restoran We POS — standar kerja harian" desc="SOP operasional restoran dengan We POS: buka toko, menerima pesanan, dapur, mengantar, pembayaran, pembatalan, reservasi, ganti shift, tutup kasir, dan saat gangguan." page="guide">
+  <div class="doc-h"><div class="wrap">
+    <h1>SOP Restoran</h1>
+    <p>Standar kerja harian untuk pemilik, kasir, pelayan, dan dapur — singkat, berurutan, dan mudah dicek. Untuk cara pakai fitur secara detail, lihat <a href={`${base}panduan/`}>Panduan</a>.</p>
+    <div class="quick"><a class="btn pri" href="#r01">Mulai dari R-01</a><a class="btn soft" href={`${base}panduan/`}>Buka Panduan</a><a class="btn ghost" href="javascript:print()">Cetak SOP</a></div>
+  </div></div>
+  <div class="doc sop-doc">
+    <aside class="toc">
+      <input id="q" type="search" placeholder="Cari SOP… (mis. tutup kasir)" />
+      <nav>{PHASES.map(([pid, pt, ids]) => <><b>{pt}</b>{ids.map((id) => <a href={`#${id}`} data-id={id}><span class="sop-code">{byId[id].code}</span><span class="t">{byId[id].title}</span></a>)}</>)}</nav>
+    </aside>
+    <article class="art" id="art">
+      <div class="sop-bar">
+        <div class="sop-roles" id="roles"><span>Tampilkan untuk</span><button class="on" data-r="">Semua</button>{ROLES.map(([k, n]) => <button data-r={k}>{n}</button>)}</div>
+        <select id="jump" aria-label="Lompat ke SOP"><option value="">Lompat ke SOP…</option>{PHASES.map(([, pt, ids]) => <optgroup label={pt}>{ids.map((id) => <option value={id}>{byId[id].code} · {byId[id].title}</option>)}</optgroup>)}</select>
+      </div>
+      <section id="cara" class="sop-legend">
+        <div><b>Pelaksana</b><span>siapa yang melakukan</span></div><div><b>Kapan</b><span>waktu / pemicu</span></div><div><b>Tujuan</b><span>hasil yang diharapkan</span></div>
+        <div><b>Langkah</b><span>ikuti berurutan</span></div><div><b>Selesai bila</b><span>daftar cek akhir</span></div><div><b>Perhatian</b><span>yang sering salah</span></div>
+      </section>
+      <p class="sop-empty" id="empty" hidden>Tidak ada SOP yang cocok. Coba kata lain atau pilih <b>Semua</b>.</p>
+      {resto.map((s) => (
+        <section id={s.id} class="sop" data-role={roleOf(s.who)}>
+          <div class="sop-h"><span class="sop-code">{s.code}</span><div><small class="sop-phase">{phaseOf(s.id)}</small><h3>{s.title}</h3></div></div>
+          <div class="sop-meta"><span><em>Pelaksana</em>{s.who}</span><span><em>Kapan</em>{s.when}</span></div>
+          <p class="sop-goal"><em>Tujuan</em>{s.goal}</p>
+          <h4>Langkah</h4>
+          <ol class="sop-steps">{s.steps.map((x) => <li set:html={m(x)} />)}</ol>
+          <div class={`sop-cols${s.warn ? '' : ' one'}`}>
+            <div class="sop-done"><h4>Selesai bila</h4><ul>{s.done.map((x) => <li set:html={m(x)} />)}</ul></div>
+            {s.warn && <div class="sop-warn"><h4>Perhatian</h4><ul>{s.warn.map((x) => <li set:html={m(x)} />)}</ul></div>}
+          </div>
+          {s.guide && <p class="sop-guide">Panduan terkait: {s.guide.map(([g, t], i) => <>{i ? ' · ' : ''}<a href={G(g)}>{t}</a></>)}</p>}
+        </section>
+      ))}
+      <p class="tip info">Sesuaikan nama jabatan, jam, dan target dengan kondisi usaha Anda. Cetak SOP dan tempel di area kasir & dapur agar mudah diikuti staf baru.</p>
+    </article>
+  </div>
+  <script is:inline>
+    const q = document.getElementById('q'), secs = [...document.querySelectorAll('#art section.sop')], links = [...document.querySelectorAll('.toc nav a')];
+    let role = '';
+    const apply = () => {
+      const v = q.value.trim().toLowerCase(); let n = 0;
+      secs.forEach((s) => { const hide = (!!v && !s.textContent.toLowerCase().includes(v)) || (!!role && !s.dataset.role.split(' ').includes(role)); s.classList.toggle('hidden-s', hide); if (!hide) n++; });
+      links.forEach((a) => a.classList.toggle('hidden-s', document.getElementById(a.dataset.id).classList.contains('hidden-s')));
+      document.querySelectorAll('.toc nav b').forEach((b) => { let x = b.nextElementSibling, any = false; while (x && x.tagName === 'A') { if (!x.classList.contains('hidden-s')) any = true; x = x.nextElementSibling; } b.classList.toggle('hidden-s', !any); });
+      document.getElementById('empty').hidden = n > 0;
+    };
+    q.addEventListener('input', apply);
+    document.getElementById('roles').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; role = b.dataset.r; b.parentNode.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b)); apply(); });
+    document.getElementById('jump').addEventListener('change', (e) => { const id = e.target.value; if (id) { location.hash = id; e.target.value = ''; } });
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => a.classList.toggle('on', a.dataset.id === e.target.id)); }), { rootMargin: '-30% 0px -60% 0px' });
+    secs.forEach((s) => io.observe(s));
+  </script>
+</SiteLayout>

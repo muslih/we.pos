@@ -1,0 +1,349 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+const base = import.meta.env.BASE_URL;
+const img = (n: string) => `${base}img/${n}.webp`;
+const P: Record<string, string> = {
+  start: '<path d="M5 3v18l15-9z"/>', store: '<path d="M3 9l2-6h14l2 6M3 9v12h18V9M3 9h18M9 21v-6h6v6"/>', key: '<circle cx="7.5" cy="15.5" r="4.5"/><path d="M10.7 12.3 21 2M17 6l3 3"/>',
+  lock: '<path d="M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4"/>', pos: '<path d="M4 4h16v10H4zM8 18h8M12 14v4"/>', cash: '<path d="M3 7h18v10H3z"/><circle cx="12" cy="12" r="2.5"/>',
+  table: '<path d="M3 9h18M5 9v11M19 9v11M8 9V5h8v4"/>', chef: '<path d="M7 14a4 4 0 0 1-.6-7.96A5 5 0 0 1 16 5a4 4 0 0 1 1 8M7 14v6h10v-7"/>', bell: '<path d="M6 16V10a6 6 0 0 1 12 0v6l2 2H4zM10 21h4"/>',
+  tv: '<path d="M3 5h18v12H3zM8 21h8M12 17v4"/>', cal: '<path d="M4 5h16v16H4zM4 10h16M9 3v4M15 3v4"/>', list: '<path d="M5 3h14v18H5zM9 8h6M9 12h6M9 16h4"/>',
+  food: '<path d="M5 3v8a3 3 0 0 0 3 3v7M8 3v6M11 3v8a3 3 0 0 1-3 3M17 21V3c-2 1-3 4-3 8h3"/>', users: '<path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a7 7 0 0 1 14 0v1"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>',
+  chart: '<path d="M4 20V4M4 20h16M8 16v-4M12 16V8M16 16v-6"/>', down: '<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>', help: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4M12 17h.01"/>',
+  qr: '<path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/>',
+  print: '<path d="M6 9V3h12v6M6 18H3V9h18v9h-3M6 14h12v7H6z"/>',
+  phone: '<path d="M7 2h10v20H7zM11 18h2"/>',
+};
+const ic = (k: string) => `<span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${P[k]}</svg></span>`;
+const toc: [string, [string, string][]][] = [
+  ['Memulai', [['kenal', 'Mengenal We POS'], ['daftar', 'Daftar restoran'], ['perangkat', 'Menghubungkan perangkat'], ['pin', 'Masuk dengan PIN & ganti shift']]],
+  ['Operasional harian', [['kasir', 'Menerima pesanan'], ['bayar', 'Pembayaran & struk'], ['qris', 'QRIS dinamis (nominal otomatis)'], ['meja', 'Meja'], ['dapur', 'Layar Dapur'], ['antar', 'Siap diantar'], ['antrian', 'Layar Antrian'], ['reservasi', 'Reservasi'], ['pesanan', 'Pesanan & pembatalan'], ['tutup', 'Tutup Kasir']]],
+  ['Pesan mandiri (self service)', [['qr-cetak', 'Cetak menu & lembar pesanan meja'], ['qr-aktif', 'Mengaktifkan QR pesan dari HP'], ['qr-pasang', 'Membuat & memasang QR di meja'], ['qr-proses', 'Menangani pesanan QR'], ['qr-masalah', 'Masalah QR & tips']]],
+  ['Kelola restoran', [['menu', 'Menu & kategori'], ['atur-meja', 'Atur meja'], ['tim', 'Tim, peran & PIN'], ['pengaturan', 'Pengaturan'], ['laporan', 'Laporan & pengeluaran'], ['ekspor', 'Ekspor & backup']]],
+  ['Bantuan', [['pasang', 'Pasang aplikasi & printer'], ['masalah', 'Masalah umum']]],
+];
+---
+<SiteLayout title="Panduan We POS — cara pakai kasir restoran" desc="Panduan lengkap We POS: daftar restoran, kasir, pembayaran, meja, layar dapur, reservasi, tutup kasir, menu, tim & PIN, laporan, ekspor." page="guide">
+  <div class="doc-h"><div class="wrap">
+    <h1>Panduan We POS</h1>
+    <p>Semua yang perlu Anda tahu untuk menjalankan restoran dengan We POS — ditulis singkat, langkah demi langkah, untuk pemilik maupun staf baru.</p>
+    <div class="quick"><a class="btn pri" href={`${base}app/?daftar`}>Daftar restoran</a><a class="btn soft" href="#qr-cetak">Cetak menu & QR meja</a><a class="btn soft" href="#kasir">Langsung ke cara menerima pesanan</a><a class="btn ghost" href={`${base}sop/`}>Lihat SOP kerja</a><a class="btn ghost" href="javascript:print()">Cetak panduan</a></div>
+  </div></div>
+  <div class="doc">
+    <aside class="toc">
+      <input id="q" type="search" placeholder="Cari di panduan… (mis. struk, PIN)" />
+      <a class="toc-sop" href={`${base}sop/`}>Standar kerja harian? Buka <b>SOP</b></a>
+      <nav>{toc.map(([g, items]) => <><b>{g}</b>{items.map(([id, t]) => <a href={`#${id}`} data-id={id}>{t}</a>)}</>)}</nav>
+    </aside>
+    <article class="art" id="art">
+
+      <section id="kenal"><h2><Fragment set:html={ic('start')} />Mengenal We POS</h2>
+        <p>We POS adalah aplikasi kasir untuk restoran, warung, dan kafe. Aplikasi berjalan di browser HP, tablet, atau laptop dan bisa dipasang seperti aplikasi biasa. Alur intinya hanya tiga langkah:</p>
+        <div class="flowline"><span>1. Ketuk menu</span><svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><span>2. Kirim ke dapur</span><svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><span>3. Bayar</span></div>
+        <h3>Halaman utama</h3>
+        <table class="tbl"><tr><th>Halaman</th><th>Untuk apa</th></tr>
+          <tr><td><b>Kasir</b></td><td>Mencatat pesanan dan menerima pembayaran.</td></tr>
+          <tr><td><b>Meja</b></td><td>Melihat meja kosong/terisi/dipesan, menambah pesanan, pindah meja.</td></tr>
+          <tr><td><b>Pesanan</b></td><td>Riwayat dan detail semua pesanan, cetak ulang struk, pembatalan.</td></tr>
+          <tr><td><b>Dapur</b></td><td>Tiket pesanan untuk koki/barista.</td></tr>
+          <tr><td><b>Reservasi</b></td><td>Mencatat tamu yang memesan tempat.</td></tr>
+          <tr><td><b>Menu</b></td><td>Daftar menu, harga, foto, dan status habis.</td></tr>
+          <tr><td><b>Laporan</b></td><td>Penjualan, menu terlaris, pengeluaran, laba.</td></tr>
+          <tr><td><b>Lainnya</b></td><td>Layar Antrian, Tutup Kasir, Tim & PIN, Pengaturan, Ekspor, Backup.</td></tr></table>
+        <p>Di laptop/tablet menu berada di sisi kiri; di HP berada di bawah layar.</p>
+      </section>
+
+      <section id="daftar"><h2><Fragment set:html={ic('store')} />Daftar restoran</h2>
+        <ol><li>Buka We POS lalu ketuk <b>Daftar Restoran Baru</b>.</li>
+          <li>Isi <b>nama restoran</b>, <b>nama Anda</b>, (mode online: <b>email</b>), dan <b>PIN 4–6 angka</b>.</li>
+          <li>Biarkan centang <b>Isi contoh menu & 8 meja</b> agar bisa langsung mencoba. Semua contoh bisa diubah atau dihapus.</li>
+          <li>Ketuk <b>Daftar & mulai</b>. Pada mode online, masukkan kode OTP yang dikirim ke email.</li>
+          <li>Catat <b>kode pemulihan</b> yang muncul, lalu ketuk <b>Sudah disimpan, mulai jualan</b>.</li></ol>
+        <div class="figs"><figure class="half"><img src={img('register')} alt="Form daftar restoran" loading="lazy" /><figcaption>Form daftar restoran</figcaption></figure>
+          <figure class="half"><img src={img('recovery')} alt="Kode pemulihan" loading="lazy" /><figcaption>Kode pemulihan — simpan baik-baik</figcaption></figure></div>
+        <div class="tip"><b>Kode pemulihan</b> adalah satu-satunya cara mengganti PIN pemilik bila lupa. Foto atau tulis di buku. Kode baru bisa dibuat di <b>Tim & PIN <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> (akun pemilik) <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> Buat kode pemulihan baru</b>.</div>
+      </section>
+
+      <section id="perangkat"><h2><Fragment set:html={ic('key')} />Menghubungkan perangkat</h2>
+        <p>Satu restoran bisa dipakai di banyak perangkat sekaligus: tablet kasir, HP pelayan, tablet dapur, dan TV antrian.</p>
+        <ol><li>Di perangkat baru, buka We POS dan ketuk <b>Hubungkan Perangkat Ini</b>.</li>
+          <li>Masukkan <b>email pemilik</b>, lalu kode OTP yang masuk ke email tersebut.</li>
+          <li>Perangkat langsung menampilkan layar <b>Siapa yang bertugas?</b> Staf kini bisa masuk dengan PIN.</li></ol>
+        <div class="tip info">Cukup sekali per perangkat. Untuk melepas perangkat (misalnya tablet hilang/dijual), pemilik membuka <b>Lainnya <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> Putuskan perangkat ini</b>.</div>
+        <p><b>Mode lokal</b> (tanpa internet/akun cloud): data hanya tersimpan di perangkat itu dan tidak tersinkron. Cocok untuk mencoba atau warung dengan satu perangkat.</p>
+      </section>
+
+      <section id="pin"><h2><Fragment set:html={ic('lock')} />Masuk dengan PIN & ganti shift</h2>
+        <ol><li>Di layar <b>Siapa yang bertugas?</b> ketuk nama Anda.</li><li>Masukkan PIN — aplikasi langsung terbuka begitu angka terakhir diketik.</li></ol>
+        <div class="figs"><figure><img src={img('lock')} alt="Pilih staf" loading="lazy" /><figcaption>Pilih nama</figcaption></figure><figure class="half"><img src={img('pin')} alt="Masukkan PIN" loading="lazy" /><figcaption>Masukkan PIN</figcaption></figure></div>
+        <p><b>Ganti shift / serahkan perangkat:</b> ketuk foto profil di pojok kanan atas <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>Kunci / Ganti pengguna</b>, atau tombol <b>Kunci</b> di halaman Lainnya.</p>
+        <p><b>Lupa PIN?</b> Staf: minta Pemilik/Manajer mengganti PIN di <b>Tim & PIN</b>. Pemilik: di layar PIN ketuk <b>Lupa PIN?</b> lalu masukkan kode pemulihan.</p>
+        <p>Staf peran <b>Dapur</b> otomatis diarahkan ke Layar Dapur setelah masuk.</p>
+      </section>
+
+      <section id="kasir"><h2><Fragment set:html={ic('pos')} />Menerima pesanan</h2>
+        <figure><img src={img('pos')} alt="Layar kasir" loading="lazy" /><figcaption>Menu di kiri, keranjang di kanan (di HP keranjang muncul sebagai bar di bawah).</figcaption></figure>
+        <h3>Makan di sini</h3>
+        <ol><li>Pastikan pilihan <b>🍽️ Makan di sini</b> aktif.</li><li>Ketuk <b>Pilih meja</b> dan pilih nomor meja. Meja oranye artinya sudah terisi — bila dipilih, item akan digabung ke pesanan meja itu.</li>
+          <li>Ketuk menu yang dipesan. Ketuk lagi untuk menambah jumlah, atau gunakan tombol <span class="kbd">−</span> <span class="kbd">+</span> di keranjang.</li>
+          <li>Ketuk <b>Kirim ke Dapur</b>. Meja berubah jadi “terisi”, tiket masuk ke Layar Dapur.</li></ol>
+        <p>Pembayaran dilakukan nanti dari halaman <b>Meja</b> atau tombol <b>Tagihan terbuka</b>.</p>
+        <h3>Bawa pulang / pesan di kasir</h3>
+        <ol><li>Pilih <b>🛍️ Bawa pulang</b>, isi nama pemesan (opsional) agar mudah dipanggil.</li><li>Ketuk menu, lalu langsung <b>Bayar</b>. Pesanan otomatis terkirim ke dapur sekaligus lunas.</li></ol>
+        <h3>Catatan untuk dapur</h3>
+        <p>Ketuk nama item di keranjang <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> ketik catatan atau ketuk pilihan cepat (<i>Pedas, Tanpa es, Kurang manis…</i>) <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>Simpan</b>. Catatan tampil merah di layar dapur.</p>
+        <figure class="half"><img src={img('line-note')} alt="Catatan item" loading="lazy" /></figure>
+        <h3>Diskon, service & pajak</h3>
+        <p>Ketuk <b>Tambah diskon</b> untuk potongan persen atau rupiah. Service dan pajak dihitung otomatis sesuai Pengaturan.</p>
+        <h3>Menambah item ke pesanan berjalan</h3>
+        <p>Dari <b>Meja</b> ketuk meja terisi <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>Tambah item</b>, atau dari <b>Tagihan terbuka</b> <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>Tambah</b>. Item lama ditandai status dapurnya, item baru bisa dikirim sebagai tiket tambahan.</p>
+        <div class="tip ok">Peran <b>Pelayan</b> hanya melihat tombol <b>Kirim ke Dapur</b> — pembayaran dilakukan kasir.</div>
+      </section>
+
+      <section id="bayar"><h2><Fragment set:html={ic('cash')} />Pembayaran & struk</h2>
+        <ol><li>Ketuk <b>Bayar</b> (di keranjang, di lembar meja, atau di detail pesanan).</li>
+          <li>Pilih metode: <b>Tunai, QRIS, Transfer,</b> atau <b>Kartu</b>.</li>
+          <li>Tunai: ketuk nominal cepat (<b>Uang pas</b>, 50.000, 100.000…) atau ketik jumlah uang. Kembalian tampil besar berwarna hijau.</li>
+          <li>Ketuk <b>Konfirmasi Bayar</b>.</li>
+          <li>Pilih <b>Cetak struk</b>, <b>Kirim WA</b>, atau <b>Pesanan baru</b>.</li></ol>
+        <figure class="half"><img src={img('pay')} alt="Pembayaran" loading="lazy" /></figure>
+        <p>Bila QRIS sudah diunggah di Pengaturan, QR tampil saat memilih QRIS sehingga pelanggan bisa langsung memindai layar. Dengan <a href="#qris">QRIS dinamis</a>, nominal tagihan sudah terisi otomatis.</p>
+        <p><b>Cetak ulang</b>: buka <b>Pesanan</b> <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> pilih pesanan <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>Cetak struk</b>. Untuk meja yang belum bayar tersedia <b>Cetak tagihan</b>.</p>
+      </section>
+
+      <section id="qris"><h2><Fragment set:html={ic('phone')} />QRIS dinamis (nominal otomatis)</h2>
+        <p>QRIS biasa (statis) membuat pelanggan harus mengetik jumlah sendiri — rawan salah ketik. We POS bisa mengubah QRIS statis toko menjadi <b>QRIS dinamis</b>: setiap kali bayar, kasir menampilkan QR yang <b>nominalnya sudah terisi</b> sesuai tagihan. Uang tetap masuk ke rekening/merchant QRIS Anda yang sama — tidak ada pihak ketiga, tidak ada biaya tambahan dari We POS.</p>
+        <h3>Mengatur (sekali saja, oleh Pemilik/Manajer)</h3>
+        <ol><li>Buka <b>Lainnya</b> <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>Pengaturan</b> <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> bagian <b>Struk & pembayaran</b>.</li>
+          <li>Ketuk <b>Unggah QRIS</b> dan pilih foto/gambar QRIS toko (stiker dari bank/e-wallet, atau unduhan dari aplikasi merchant).</li>
+          <li>We POS membaca isi QR otomatis. Bila berhasil, muncul kotak centang hijau berisi <b>nama merchant, kota & NMID</b> — cocokkan dengan stiker QRIS Anda.</li>
+          <li>Pastikan <b>QRIS dinamis (nominal otomatis)</b> tercentang, lalu ketuk <b>Simpan pengaturan</b>.</li></ol>
+        <div class="figs"><figure><img src={img('qris-atur')} alt="Pengaturan QRIS dinamis" loading="lazy" /><figcaption>QRIS terbaca: nama merchant & NMID tampil</figcaption></figure>
+          <figure><img src={img('qris-dinamis')} alt="QRIS dinamis di kasir" loading="lazy" /><figcaption>Saat bayar: nominal sudah terisi</figcaption></figure></div>
+        <div class="tip">Gambar tidak terbaca? Gunakan foto yang tegak, terang, dan tidak terpotong — atau buka <b>Tempel kode QRIS manual</b>: scan QRIS dengan aplikasi pemindai QR di HP, salin teksnya (diawali <code>000201</code>), lalu tempel.</div>
+        <h3>Saat pelanggan membayar</h3>
+        <ol><li>Ketuk <b>Bayar</b> <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> pilih <b>QRIS</b>. QR dinamis dengan nominal tagihan tampil di layar.</li>
+          <li>Pelanggan scan dengan m-banking/e-wallet — jumlah sudah terisi, tinggal konfirmasi PIN.</li>
+          <li>Cek notifikasi dana masuk di aplikasi merchant/HP kasir, lalu ketuk <b>Konfirmasi Bayar</b>.</li></ol>
+        <p><b>Cetak tagihan</b> untuk meja yang belum bayar juga memuat QRIS dinamis sesuai sisa tagihan, sehingga pelanggan bisa membayar langsung dari meja.</p>
+        <div class="tip warn">We POS <b>tidak</b> menerima konfirmasi otomatis dari bank. Jangan konfirmasi hanya berdasarkan layar HP pelanggan — selalu cek dana masuk di aplikasi merchant Anda. Matikan centang QRIS dinamis bila ingin kembali menampilkan gambar QRIS statis.</div>
+      </section>
+
+      <section id="meja"><h2><Fragment set:html={ic('table')} />Meja</h2>
+        <figure><img src={img('meja')} alt="Denah meja" loading="lazy" /></figure>
+        <table class="tbl"><tr><th>Warna</th><th>Arti</th><th>Ketuk untuk…</th></tr>
+          <tr><td>Putih</td><td>Kosong</td><td>Langsung membuat pesanan untuk meja itu</td></tr>
+          <tr><td>Oranye</td><td>Terisi (total, nomor pesanan, lama duduk)</td><td>Tambah item, bayar, cetak tagihan, pindah meja</td></tr>
+          <tr><td>Kuning</td><td>Ada reservasi hari ini (jam & nama tamu)</td><td>Membuat pesanan</td></tr></table>
+        <p>Label <b>Siap</b> berkedip hijau artinya ada makanan yang selesai dimasak dan menunggu diantar. Meja terisi lebih dari 90 menit warnanya lebih gelap.</p>
+        <figure class="half"><img src={img('table-sheet')} alt="Lembar meja" loading="lazy" /><figcaption>Lembar meja terisi</figcaption></figure>
+        <p>Pesanan bawa pulang yang belum dibayar ditampilkan di bawah denah meja.</p>
+      </section>
+
+      <section id="dapur"><h2><Fragment set:html={ic('chef')} />Layar Dapur</h2>
+        <p>Buka <b>Dapur</b> di tablet yang diletakkan di dapur (atau bar). Masuk sebagai staf peran Dapur agar layar langsung terbuka.</p>
+        <figure><img src={img('t-dapur')} alt="Layar dapur" loading="lazy" /></figure>
+        <ul><li>Setiap tiket menunjukkan nomor pesanan, meja/bawa pulang, nama tamu, dan lama menunggu.</li>
+          <li>Garis atas <b>hijau</b> &lt; 10 menit, <b>kuning</b> 10–20 menit, <b>merah</b> &gt; 20 menit.</li>
+          <li>Ketuk satu item untuk mencoretnya (sudah jadi). Ketuk <b>Selesai</b> bila semua item tiket siap.</li>
+          <li>Pesanan tambahan dari meja yang sama muncul sebagai tiket baru bertanda <b>Tambahan</b>.</li>
+          <li>Salah menekan Selesai? Ketuk nomornya di baris <b>Siap diantar</b> bawah untuk mengembalikan ke dapur.</li>
+          <li>Pisahkan layar <b>Dapur</b> dan <b>Bar</b> dengan tombol di kiri atas (menu minuman diatur “Bar” di halaman Menu).</li>
+          <li>Tombol speaker mematikan/menyalakan bunyi tiket baru; tombol layar penuh untuk tampilan maksimal.</li></ul>
+        <div class="tip">Dapur tidak memakai tablet? Matikan <b>Pakai layar dapur</b> di Pengaturan — pesanan langsung dianggap siap.</div>
+      </section>
+
+      <section id="antar"><h2><Fragment set:html={ic('bell')} />Siap diantar</h2>
+        <p>Begitu dapur menekan Selesai, tombol lonceng hijau <b>🔔</b> muncul di kanan atas layar kasir/pelayan dengan jumlah pesanan yang siap.</p>
+        <ol><li>Ketuk lonceng untuk melihat daftar pesanan yang siap.</li><li>Antar ke meja / panggil pelanggan, lalu ketuk <b>Sudah diantar</b>.</li></ol>
+        <figure class="half"><img src={img('ready')} alt="Siap diantar" loading="lazy" /></figure>
+      </section>
+
+      <section id="antrian"><h2><Fragment set:html={ic('tv')} />Layar Antrian</h2>
+        <p>Untuk pesanan bawa pulang. Buka <b>Lainnya <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> Layar Antrian</b> di TV atau tablet yang menghadap pelanggan, lalu tekan tombol layar penuh.</p>
+        <figure><img src={img('antrian')} alt="Layar antrian" loading="lazy" /></figure>
+        <p>Kolom kiri menampilkan nomor yang <b>sedang disiapkan</b>, kolom hijau menampilkan nomor yang <b>siap diambil</b> beserta nama pemesan. Nomor antrian tercetak di struk (<b>#12</b>). Tombol “Semua pesanan” menampilkan juga pesanan makan di tempat.</p>
+      </section>
+
+      <section id="reservasi"><h2><Fragment set:html={ic('cal')} />Reservasi</h2>
+        <ol><li>Buka <b>Reservasi</b> <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>+ Reservasi</b>.</li><li>Isi nama, nomor WA, tanggal, jam, jumlah orang, meja (opsional), dan catatan.</li>
+          <li>Meja yang sudah dipesan di jam berdekatan (±2 jam) diberi keterangan agar tidak bentrok.</li>
+          <li>Ketuk ikon WhatsApp untuk mengirim konfirmasi ke tamu.</li>
+          <li>Saat tamu tiba, ketuk <b>Tamu datang</b> — kasir terbuka dengan meja & nama tamu terisi otomatis.</li></ol>
+        <div class="figs"><figure><img src={img('reservasi')} alt="Daftar reservasi" loading="lazy" /></figure><figure class="half"><img src={img('resform')} alt="Form reservasi" loading="lazy" /></figure></div>
+        <p>Ubah status melalui tombol pensil: <b>Tidak datang</b> atau <b>Batalkan</b>.</p>
+      </section>
+
+      <section id="pesanan"><h2><Fragment set:html={ic('list')} />Pesanan & pembatalan</h2>
+        <p>Halaman <b>Pesanan</b> berisi tab <b>Berjalan</b> (belum bayar), <b>Selesai hari ini</b>, <b>Semua</b>, dan <b>Dibatalkan</b>. Gunakan kolom cari untuk nomor, nama tamu, atau nama menu.</p>
+        <figure class="half"><img src={img('order-detail')} alt="Detail pesanan" loading="lazy" /></figure>
+        <h3>Membatalkan</h3>
+        <ul><li><b>Satu item</b>: di detail pesanan yang belum dibayar, ketuk <b>×</b> di samping item.</li>
+          <li><b>Seluruh pesanan / transaksi lunas</b>: ketuk <b>Batalkan pesanan</b> atau <b>Batalkan transaksi (refund)</b>, isi alasan.</li></ul>
+        <div class="tip">Pembatalan item yang sudah dikirim ke dapur dan pembatalan transaksi membutuhkan <b>PIN Manajer/Pemilik</b>. Nama yang menyetujui ikut tercatat.</div>
+      </section>
+
+      <section id="tutup"><h2><Fragment set:html={ic('cash')} />Tutup Kasir</h2>
+        <ol><li>Di akhir shift buka <b>Lainnya <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> Tutup Kasir</b>.</li><li>Periksa ringkasan penjualan per metode sejak tutup kasir terakhir.</li>
+          <li>Isi <b>Modal awal</b> (uang kembalian di laci) dan <b>Uang fisik di laci</b> hasil hitungan.</li>
+          <li>Aplikasi menampilkan <b>Seharusnya di laci</b> = modal + penjualan tunai − pengeluaran dari kas, serta selisihnya.</li>
+          <li>Ketuk <b>Tutup Kasir</b> lalu <b>Cetak</b> bila perlu.</li></ol>
+        <figure><img src={img('tutup')} alt="Tutup kasir" loading="lazy" /></figure>
+        <p>Belanja kecil yang dibayar dari laci (misalnya es batu) catat lewat tombol <b>Catat pengeluaran</b> dengan centang <i>dibayar dari uang laci</i>, agar selisih tetap akurat.</p>
+      </section>
+
+      <section id="qr-cetak"><h2><Fragment set:html={ic('print')} />Cetak menu & lembar pesanan meja</h2>
+        <p>Menu meja dibuat otomatis dari daftar menu terbaru. Menu yang sedang <b>Habis</b> tidak ikut dicetak. Fitur ini bisa dipakai di <b>semua paket</b>, termasuk mode lokal/offline.</p>
+        <ol><li>Buka <b>Menu</b> lalu ketuk <b>Cetak menu meja</b> di kanan atas.</li>
+          <li><b>1 · Isi cetakan</b> — pilih salah satu:
+            <ul><li><b>QR saja</b> — kartu berisi QR & nomor meja. Pelanggan melihat menu dan memesan dari HP. Paling hemat kertas; tidak perlu dicetak ulang saat harga berubah.</li>
+              <li><b>QR + menu</b> — menu lengkap dengan QR besar di atas. Pelanggan bisa membaca di kertas atau langsung pesan dari HP.</li>
+              <li><b>Menu + lembar pesanan</b> — ada kotak centang & kolom jumlah. Pelanggan mengisi sendiri lalu menyerahkan ke kasir (bila QR aktif, QR kecil ikut dicetak).</li>
+              <li><b>Menu saja</b> — daftar menu & harga tanpa QR.</li></ul>
+            Pilihan <b>QR saja</b> dan <b>QR + menu</b> baru bisa dipilih setelah <a href="#qr-aktif">QR pesan dari HP diaktifkan</a>.</li>
+          <li><b>2 · Ukuran kartu</b> (untuk QR saja): <b>1 besar</b> (standing A5/A4), <b>2 per halaman</b> (tenda meja dilipat), <b>4 per halaman</b> (kartu sedang), atau <b>6 per halaman</b> (stiker meja).<br>
+            <b>2 · Gaya menu</b> (untuk pilihan yang memuat menu): <b>Klasik</b> (garis tegas & titik-titik harga), <b>Modern</b> (kepala berwarna toko & kartu kategori), <b>Minimalis</b> (rapi di tengah, huruf elegan — cocok untuk kafe/fine dining), atau <b>Kafe</b> (ikon menu & label kategori berwarna). Lalu pilih kertas <b>A4</b> atau <b>A5</b>.</li>
+          <li>Pilih meja yang akan dicetak (default semua meja). Setiap meja mendapat lembar sendiri dengan nomor mejanya.</li>
+          <li>Ketuk <b>Pratinjau</b> untuk memeriksa, lalu <b>Cetak</b>.</li>
+          <li>Di jendela cetak: pilih printer, ukuran kertas sesuai pilihan, margin <b>Default/Tidak ada</b>, matikan <i>header & footer</i>. Untuk disimpan sebagai file, pilih <b>Simpan sebagai PDF</b>.</li></ol>
+        <div class="figs"><figure><img src={img('qr-cetak-pilih')} alt="Pilihan cetak menu meja" loading="lazy" /><figcaption>Pilih isi cetakan, gaya & meja</figcaption></figure>
+          <figure><img src={img('qr-cetak-pratinjau')} alt="Pratinjau menu meja" loading="lazy" /><figcaption>Pratinjau sebelum cetak</figcaption></figure></div>
+        <figure><img src={img('qr-gaya')} alt="Empat gaya menu cetak" loading="lazy" /><figcaption>Gaya menu: Klasik · Modern · Minimalis · Kafe (warna mengikuti warna toko)</figcaption></figure>
+        <div class="tip ok">Warna gaya Modern & Kafe otomatis mengikuti <b>warna toko</b> di Pengaturan. Bila printer hitam-putih, pilih <b>Klasik</b> atau <b>Minimalis</b> agar tetap tajam. Di jendela cetak, centang <b>Grafik latar belakang</b> agar warna ikut tercetak.</div>
+        <div class="tip">Cetak ulang setiap kali harga atau menu berubah, lalu ganti lembar di semua meja. Laminasi atau masukkan ke akrilik agar awet; lembar pesanan bisa ditulis dengan spidol papan tulis lalu dihapus.</div>
+        <h3>Alur lembar pesanan kertas</h3>
+        <div class="flowline"><span>Pelanggan centang & isi jumlah</span><svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><span>Serahkan ke kasir</span><svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><span>Kasir input di Kasir (pilih meja)</span><svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg><span>Kirim ke Dapur</span></div>
+      </section>
+
+      <section id="qr-aktif"><h2><Fragment set:html={ic('qr')} />Mengaktifkan QR pesan dari HP</h2>
+        <p>Dengan QR, pelanggan scan kode di meja, memilih menu di HP-nya sendiri, dan pesanan langsung masuk ke <b>Kasir & Dapur</b>. Butuh <b>mode online</b> (Dexie Cloud), tersedia mulai paket <b>Pro</b>. Paket <b>Gratis</b> tidak bisa memakai QR pesan dari HP karena datanya hanya tersimpan di perangkat itu (database lokal) — HP pelanggan tidak bisa mengirim pesanan ke sana. Menu & lembar pesanan kertas tetap bisa dicetak di semua paket.</p>
+        <h3>Langkah 1 — Siapkan server (sekali, oleh pemilik/tim teknis)</h3>
+        <ol><li>Buka proyek di <b>Vercel</b> <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> Settings <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>Environment Variables</b>.</li>
+          <li>Isi <code>DEXIE_CLOUD_DB_URL</code> (dari file <code>dexie-cloud.json</code>), <code>DEXIE_CLOUD_CLIENT_ID</code> dan <code>DEXIE_CLOUD_CLIENT_SECRET</code> (dari file <code>dexie-cloud.key</code>).</li>
+          <li>Redeploy. Kunci rahasia hanya disimpan di server, tidak pernah di aplikasi kasir.</li></ol>
+        <h3>Langkah 2 — Aktifkan di aplikasi (Pemilik/Manajer)</h3>
+        <ol><li>Buka Lainnya <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>Pengaturan</b> <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> bagian <b>Pesan mandiri (QR meja)</b>.</li>
+          <li>Centang <b>Aktifkan pesan lewat QR</b>.</li>
+          <li>Pilih cara masuknya pesanan:
+            <ul><li><b>Langsung ke dapur</b> — paling cepat, cocok untuk kafe/warung ramai.</li>
+              <li><b>Konfirmasi kasir dulu</b> — kasir memeriksa & menekan <b>Terima</b> sebelum dikirim ke dapur. Cocok bila khawatir ada pesanan iseng.</li></ul></li>
+          <li>Isi <b>Alamat web publik</b>, misalnya <code>https://nama-aplikasi.vercel.app</code>. Jangan isi <i>localhost</i> — alamat ini dibuka dari HP pelanggan.</li>
+          <li>Ketuk <b>Simpan pengaturan</b>. Muncul <b>Contoh QR</b> untuk meja pertama dan tautan <b>Buka halaman pesan</b>.</li>
+          <li>Uji: scan contoh QR dengan HP, kirim 1 pesanan, pastikan muncul di kasir & dapur, lalu batalkan.</li></ol>
+      </section>
+
+      <section id="qr-pasang"><h2><Fragment set:html={ic('table')} />Membuat & memasang QR di meja</h2>
+        <p>QR dibuat otomatis per meja — tidak perlu aplikasi pembuat QR lain. Setiap QR berisi alamat restoran, nomor meja, dan kode keamanan.</p>
+        <ol><li>Pastikan semua meja sudah dibuat di <b>Meja</b> <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>Atur meja</b> (QR dibuat per meja).</li>
+          <li>Buka <b>Menu</b> <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>Cetak menu meja</b>.</li>
+          <li>Pilih <b>QR saja</b> (kartu QR, ukuran 1/2/4/6 per halaman) atau <b>QR + menu</b> (menu lengkap dengan QR besar di atas, pilih gayanya). <b>Menu + lembar pesanan</b> juga memuat QR kecil.</li>
+          <li>Pilih meja, <b>Pratinjau</b>, lalu <b>Cetak</b>.</li>
+          <li>Pasang di meja yang <b>nomornya sama</b> dengan yang tercetak. Pakai standing akrilik atau stiker laminasi.</li>
+          <li>Scan satu per satu dengan HP untuk memastikan nomor meja yang muncul sudah benar.</li></ol>
+        <div class="figs"><figure><img src={img('qr-kartu')} alt="Kartu QR meja" loading="lazy" /><figcaption>QR saja — 4 per lembar A4 (bisa 1, 2, atau 6)</figcaption></figure>
+          <figure><img src={img('qr-menu-meja')} alt="Menu meja dengan QR" loading="lazy" /><figcaption>Menu + lembar pesanan dengan QR</figcaption></figure></div>
+        <h3>Yang dilihat pelanggan</h3>
+        <div class="figs"><figure class="ph"><img src={img('qr-hp-menu')} alt="Menu di HP pelanggan" loading="lazy" /><figcaption>1. Pilih menu</figcaption></figure>
+          <figure class="ph"><img src={img('qr-hp-keranjang')} alt="Keranjang pelanggan" loading="lazy" /><figcaption>2. Periksa & kirim</figcaption></figure>
+          <figure class="ph"><img src={img('qr-hp-status')} alt="Status pesanan" loading="lazy" /><figcaption>3. Pantau status</figcaption></figure></div>
+        <div class="tip"><b>Buat ulang kode QR</b> (Pengaturan <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> Pesan mandiri) membatalkan <b>semua</b> QR lama — gunakan bila QR disalahgunakan, lalu cetak & pasang ulang semua QR.</div>
+      </section>
+
+      <section id="qr-proses"><h2><Fragment set:html={ic('bell')} />Menangani pesanan QR</h2>
+        <ul><li>Pesanan QR baru berbunyi dan muncul notifikasi <b>Pesanan QR baru · Meja X</b>.</li>
+          <li><b>Mode langsung ke dapur:</b> tiket otomatis masuk Layar Dapur dengan label <b>QR</b>. Kasir cukup memantau.</li>
+          <li><b>Mode konfirmasi kasir:</b> tombol <b>Pesanan QR</b> muncul di atas layar. Ketuk, periksa isi pesanan, lalu <b>Terima</b> (masuk dapur) atau <b>Tolak</b> (dibatalkan, datangi meja).</li>
+          <li>Pesanan tambahan dari meja yang sama otomatis digabung ke tagihan meja itu.</li>
+          <li>Pembayaran tetap di kasir seperti biasa. Di daftar Pesanan, transaksi dari QR diberi label <b>QR</b>.</li></ul>
+        <figure class="half"><img src={img('qr-kasir')} alt="Pesanan QR di kasir" loading="lazy" /><figcaption>Kasir menerima atau menolak pesanan QR</figcaption></figure>
+        <p>SOP terkait: <a href={`${base}sop/#r04`}>R-04 Pesanan QR & lembar kertas</a></p>
+      </section>
+
+      <section id="qr-masalah"><h2><Fragment set:html={ic('help')} />Masalah QR & tips</h2>
+        <h3>“QR pesan dari HP belum aktif”</h3><p>Fitur belum dinyalakan. Pemilik/Manajer buka Pengaturan <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> Pesan mandiri (lihat <a href="#qr-aktif">Mengaktifkan QR</a>). Pada mode lokal, gunakan lembar pesanan kertas.</p>
+        <h3>Pelanggan melihat “Kode QR ini sudah tidak berlaku”</h3><p>Kode QR sudah dibuat ulang atau fitur dimatikan. Cetak & pasang ulang QR meja.</p>
+        <h3>“Pesan lewat QR belum diaktifkan di server”</h3><p>Environment Variables di Vercel belum diisi atau belum redeploy (Langkah 1).</p>
+        <h3>Halaman pesan tidak terbuka di HP pelanggan</h3><p>Periksa <b>Alamat web publik</b> — harus alamat internet (https://…), bukan localhost atau alamat Wi-Fi lokal.</p>
+        <h3>Tips</h3><ul><li>Tandai menu habis secepatnya — pelanggan tidak bisa memesan menu habis.</li><li>Uji scan QR setiap memasang QR di meja baru.</li><li>Tambahkan tulisan kecil “Bayar di kasir setelah makan” di samping QR.</li></ul>
+      </section>
+
+      <section id="menu"><h2><Fragment set:html={ic('food')} />Menu & kategori</h2>
+        <ol><li>Buka <b>Menu</b> <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>+ Menu</b>.</li><li>Unggah <b>Foto</b> atau ketuk <b>Pilih ikon</b>.</li><li>Isi nama, harga, kategori, dan tempat dibuat (<b>Dapur</b> atau <b>Bar</b>). Simpan.</li></ol>
+        <div class="figs"><figure><img src={img('menu')} alt="Daftar menu" loading="lazy" /></figure><figure class="half"><img src={img('menuform')} alt="Form menu" loading="lazy" /></figure></div>
+        <p><b>Menu habis?</b> Geser tombol <b>Tersedia</b> menjadi <b>Habis</b>. Menu tetap tampil di kasir tapi tidak bisa dipesan. Kasir juga bisa melakukan ini.</p>
+        <p><b>Kategori</b>: tombol Kategori untuk menambah, mengganti nama (boleh diawali emoji, mis. “🍜 Mie”), mengurutkan, atau menghapus. Urutan kategori = urutan tab di kasir.</p>
+      </section>
+
+      <section id="atur-meja"><h2><Fragment set:html={ic('table')} />Atur meja</h2>
+        <ol><li>Buka <b>Meja</b> <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>Atur meja</b>.</li><li>Ketuk <b>Tambah meja</b>: isi nomor, jumlah kursi, dan area (mis. Dalam, Teras, Lantai 2). Pilih <b>Buat sekaligus</b> untuk menambah beberapa meja bernomor urut.</li>
+          <li>Ketuk meja untuk mengubah atau menghapus. Ketuk <b>Selesai atur</b> bila sudah.</li></ol>
+      </section>
+
+      <section id="tim"><h2><Fragment set:html={ic('users')} />Tim, peran & PIN</h2>
+        <ol><li>Buka <b>Lainnya <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> Tim & PIN</b> <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>+ Staf</b>.</li><li>Isi nama, pilih peran, buat PIN 4–6 angka. Simpan.</li><li>Untuk ganti PIN atau menonaktifkan staf, ketuk namanya.</li></ol>
+        <figure class="half"><img src={img('staffform')} alt="Tambah staf" loading="lazy" /></figure>
+        <table class="tbl"><tr><th>Fitur</th><th class="c">Pemilik / Manajer</th><th class="c">Kasir</th><th class="c">Pelayan</th><th class="c">Dapur</th></tr>
+          <tr><td>Kasir: catat & kirim pesanan</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">–</td></tr>
+          <tr><td>Terima pembayaran</td><td class="y">✓</td><td class="y">✓</td><td class="n">–</td><td class="n">–</td></tr>
+          <tr><td>Meja, Pesanan, Reservasi</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="n">–</td></tr>
+          <tr><td>Layar Dapur & Antrian</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td></tr>
+          <tr><td>Tandai menu habis</td><td class="y">✓</td><td class="y">✓</td><td class="n">–</td><td class="n">–</td></tr>
+          <tr><td>Tutup Kasir</td><td class="y">✓</td><td class="y">✓</td><td class="n">–</td><td class="n">–</td></tr>
+          <tr><td>Ubah menu & harga, meja</td><td class="y">✓</td><td class="n">–</td><td class="n">–</td><td class="n">–</td></tr>
+          <tr><td>Laporan, Ekspor, Tim, Pengaturan</td><td class="y">✓</td><td class="n">–</td><td class="n">–</td><td class="n">–</td></tr>
+          <tr><td>Menyetujui pembatalan (PIN)</td><td class="y">✓</td><td class="n">–</td><td class="n">–</td><td class="n">–</td></tr></table>
+      </section>
+
+      <section id="pengaturan"><h2><Fragment set:html={ic('gear')} />Pengaturan</h2>
+        <ul><li><b>Profil restoran</b>: logo, nama, telepon, alamat, warna tema, kode pesanan.</li>
+          <li><b>Pajak & service</b>: isi persen (0 = tidak dipakai). Service dihitung dari subtotal setelah diskon; pajak dari subtotal + service.</li>
+          <li><b>Dapur</b>: nyalakan/matikan Layar Dapur.</li>
+          <li><b>Struk & pembayaran</b>: lebar kertas (58/80 mm), catatan kaki struk, gambar QRIS & <a href="#qris">QRIS dinamis</a>.</li>
+          <li><b>Data</b>: backup/pulihkan dan isi transaksi contoh untuk mencoba laporan.</li></ul>
+        <figure><img src={img('pengaturan')} alt="Pengaturan" loading="lazy" /></figure>
+      </section>
+
+      <section id="laporan"><h2><Fragment set:html={ic('chart')} />Laporan & pengeluaran</h2>
+        <p>Pilih periode (Hari ini, Kemarin, 7 hari, Bulan ini, Bulan lalu, atau tanggal bebas).</p>
+        <ul><li><b>Ringkasan</b>: penjualan, rata-rata per transaksi, pengeluaran, laba kotor, grafik penjualan, jam ramai, metode bayar, tipe pesanan, per kasir.</li>
+          <li><b>Menu terlaris</b>: 10 teratas, penjualan per kategori, dan menu yang tidak terjual.</li>
+          <li><b>Pengeluaran</b>: catat belanja bahan, gas, gaji, sewa, dll.</li></ul>
+        <figure><img src={img('laporan')} alt="Laporan" loading="lazy" /></figure>
+      </section>
+
+      <section id="ekspor"><h2><Fragment set:html={ic('down')} />Ekspor & backup</h2>
+        <ol><li>Buka <b>Laporan <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> Ekspor</b> atau <b>Lainnya <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> Ekspor Excel</b>.</li><li>Pilih periode dan data: Transaksi, Rincian Menu, Ringkasan Harian, Pengeluaran, Tutup Kasir, Daftar Menu.</li>
+          <li>Pilih format <b>Excel</b> (satu file banyak sheet), <b>CSV</b>, atau <b>Google Sheets</b> (salin lalu tempel).</li></ol>
+        <figure class="half"><img src={img('ekspor')} alt="Ekspor" loading="lazy" /></figure>
+        <p><b>Backup</b>: Lainnya <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> Backup & Pulihkan <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> Download backup (.json). Simpan file berkala, terutama pada mode lokal.</p>
+      </section>
+
+      <section id="pasang"><h2><Fragment set:html={ic('phone')} />Pasang aplikasi & printer</h2>
+        <h3>Pasang di layar utama</h3>
+        <ul><li><b>Android (Chrome)</b>: menu ⋮ <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>Tambahkan ke layar utama / Instal aplikasi</b>.</li><li><b>iPhone/iPad (Safari)</b>: tombol Bagikan <svg class="ar" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg> <b>Tambah ke Layar Utama</b>.</li><li><b>Laptop (Chrome/Edge)</b>: ikon instal di ujung kolom alamat.</li></ul>
+        <h3>Printer struk</h3>
+        <ul><li>Gunakan printer thermal 58 mm atau 80 mm yang terhubung ke perangkat (USB/Bluetooth sesuai dukungan perangkat).</li>
+          <li>Atur lebar kertas di Pengaturan. Saat jendela cetak muncul, pilih printer, atur margin <b>Tidak ada</b>, dan matikan header/footer.</li>
+          <li>Tanpa printer? Kirim struk lewat <b>WhatsApp</b>.</li></ul>
+      </section>
+
+      <section id="masalah"><h2><Fragment set:html={ic('help')} />Masalah umum</h2>
+        <h3>Internet putus</h3><p>Tetap lanjut jualan. Titik status di kanan atas menjadi abu-abu; data otomatis tersinkron saat online kembali.</p>
+        <h3>Pesanan tidak muncul di dapur</h3><p>Pastikan tablet dapur terhubung ke restoran yang sama dan <b>Pakai layar dapur</b> aktif. Tarik/muat ulang halaman bila perangkat lama tidak aktif.</p>
+        <h3>Tidak ada bunyi tiket baru</h3><p>Browser membutuhkan satu ketukan di layar sebelum boleh membunyikan suara. Ketuk layar dapur sekali setelah dibuka, dan pastikan ikon speaker tidak dimatikan.</p>
+        <h3>Staf tidak bisa membuka halaman tertentu</h3><p>Halaman dibatasi sesuai peran. Pemilik dapat mengubah peran di Tim & PIN.</p>
+        <h3>Nomor antrian kembali ke 1</h3><p>Normal — nomor antrian dimulai lagi setiap hari. Kode pesanan lengkap (mis. WAR261026-001) tetap unik.</p>
+      </section>
+    </article>
+  </div>
+  <script is:inline>
+    const q = document.getElementById('q'), secs = [...document.querySelectorAll('#art section')], links = [...document.querySelectorAll('.toc a')];
+    q.addEventListener('input', () => {
+      const v = q.value.trim().toLowerCase();
+      secs.forEach((s) => s.classList.toggle('hidden-s', !!v && !s.textContent.toLowerCase().includes(v)));
+      links.forEach((a) => a.classList.toggle('hidden-s', !!v && document.getElementById(a.dataset.id).classList.contains('hidden-s')));
+    });
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) links.forEach((a) => a.classList.toggle('on', a.dataset.id === e.target.id)); }), { rootMargin: '-30% 0px -60% 0px' });
+    secs.forEach((s) => io.observe(s));
+  </script>
+</SiteLayout>

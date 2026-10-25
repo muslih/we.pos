@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laundry POS</title>
+<style>
+:root{--pri:#0b6bcb;--pri-d:#0a58a8;--bg:#f4f6fa;--card:#fff;--tx:#1d2433;--mut:#6b7385;--bd:#e3e7ef;--ok:#1a8f4c;--warn:#c27c0e;--err:#c4332b}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);font-size:14px}
+.app{display:flex;min-height:100vh}
+aside{width:210px;background:#10233f;color:#cdd6e6;flex-shrink:0;display:flex;flex-direction:column}
+aside .brand{padding:18px 16px;font-weight:700;font-size:17px;color:#fff;border-bottom:1px solid #1d3558}
+aside .brand small{display:block;font-weight:400;font-size:12px;color:#8da2c2;margin-top:2px}
+aside nav{padding:8px}
+aside button{display:flex;gap:10px;align-items:center;width:100%;background:none;border:0;color:inherit;padding:10px 12px;border-radius:8px;font-size:14px;cursor:pointer;text-align:left}
+aside button:hover{background:#1a3256}
+aside button.active{background:var(--pri);color:#fff}
+main{flex:1;padding:22px;min-width:0}
+h1{font-size:21px;margin:0 0 16px}
+h2{font-size:16px;margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:16px}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.stat .lbl{color:var(--mut);font-size:12px}
+.stat .val{font-size:22px;font-weight:700;margin-top:4px}
+.stat .sub{font-size:12px;color:var(--mut);margin-top:2px}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--bd);vertical-align:middle}
+th{font-size:12px;color:var(--mut);font-weight:600;background:#fafbfd}
+td.r,th.r{text-align:right}
+.btn{background:var(--pri);color:#fff;border:0;border-radius:8px;padding:8px 14px;font-size:14px;cursor:pointer;font-weight:500}
+.btn:hover{background:var(--pri-d)}
+.btn.sec{background:#eef2f8;color:var(--tx)}
+.btn.sec:hover{background:#e1e7f1}
+.btn.ok{background:var(--ok)}
+.btn.err{background:var(--err)}
+.btn.sm{padding:5px 10px;font-size:12.5px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--bd);border-radius:8px;font-size:14px;font-family:inherit;background:#fff}
+input:focus,select:focus,textarea:focus{outline:2px solid #bcd6f3;border-color:var(--pri)}
+label{display:block;font-size:12.5px;color:var(--mut);margin:0 0 4px}
+.f{margin-bottom:12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row>.grow{flex:1}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.s-diterima{background:#e8eefb;color:#2f56b0}
+.s-dicuci{background:#e3f4fb;color:#11729a}
+.s-disetrika{background:#f3ecfc;color:#7340b8}
+.s-siap{background:#fff3dc;color:#9a6100}
+.s-diambil{background:#e3f5ea;color:#1a7a43}
+.p-lunas{background:#e3f5ea;color:#1a7a43}
+.p-belum{background:#fde8e7;color:#b0322a}
+.p-dp{background:#fff3dc;color:#9a6100}
+.mut{color:var(--mut)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tabs button{border:1px solid var(--bd);background:#fff;border-radius:20px;padding:6px 12px;cursor:pointer;font-size:13px}
+.tabs button.active{background:var(--pri);border-color:var(--pri);color:#fff}
+.modal-bg{position:fixed;inset:0;background:rgba(15,25,45,.45);display:none;align-items:flex-start;justify-content:center;padding:40px 12px;overflow:auto;z-index:50}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:560px;padding:20px}
+.modal.wide{max-width:760px}
+.modal h2{display:flex;justify-content:space-between;align-items:center}
+.x{background:none;border:0;font-size:22px;cursor:pointer;color:var(--mut)}
+.total-box{background:#f3f7fd;border-radius:10px;padding:12px 14px}
+.total-box .row{justify-content:space-between}
+.total-box .big{font-size:20px;font-weight:700}
+.empty{padding:26px;text-align:center;color:var(--mut)}
+.toast{position:fixed;bottom:20px;right:20px;background:#10233f;color:#fff;padding:11px 16px;border-radius:10px;opacity:0;transition:.25s;z-index:99;pointer-events:none}
+.toast.show{opacity:1}
+.bars{display:flex;align-items:flex-end;gap:4px;height:150px;padding-top:10px}
+.bars .b{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.bars .b i{display:block;width:100%;max-width:28px;background:var(--pri);border-radius:4px 4px 0 0;min-height:2px}
+.bars .b span{font-size:10px;color:var(--mut);margin-top:4px}
+.svc-pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.svc-pick button{border:1px solid var(--bd);background:#fff;border-radius:10px;padding:10px;text-align:left;cursor:pointer}
+.svc-pick button:hover{border-color:var(--pri);background:#f3f7fd}
+.svc-pick b{display:block;font-size:13px}
+.svc-pick small{color:var(--mut)}
+.qty{width:80px}
+.nota{font-family:"Courier New",monospace;font-size:12.5px;width:300px;margin:0 auto;color:#000}
+.nota .c{text-align:center}
+.nota hr{border:0;border-top:1px dashed #000;margin:6px 0}
+.nota .l{display:flex;justify-content:space-between;gap:8px}
+#print-area{display:none}
+@media print{
+ body *{visibility:hidden}
+ #print-area,#print-area *{visibility:visible}
+ #print-area{display:block;position:absolute;left:0;top:0}
+ @page{margin:4mm}
+}
+@media (max-width:760px){
+ .app{flex-direction:column}
+ aside{width:100%}
+ aside nav{display:flex;overflow-x:auto;gap:4px}
+ aside button{white-space:nowrap;width:auto}
+ main{padding:14px}
+ .hide-m{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+ <aside>
+  <div class="brand" id="brand">Laundry POS<small>Kasir Laundry</small></div>
+  <nav id="nav"></nav>
+ </aside>
+ <main id="main"></main>
+</div>
+<div class="modal-bg" id="modalBg"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+<div id="print-area"></div>
+
+<script>
+/* ================= DATA ================= */
+const KEY='laundry_pos_v1';
+const STATUSES=[
+ {k:'diterima',n:'Diterima'},{k:'dicuci',n:'Dicuci'},{k:'disetrika',n:'Disetrika'},
+ {k:'siap',n:'Siap Diambil'},{k:'diambil',n:'Sudah Diambil'}];
+const METHODS=['Tunai','Transfer','QRIS'];
+const EXP_CAT=['Deterjen & Pewangi','Plastik & Kemasan','Listrik','Air','Gaji','Sewa','Perawatan Mesin','Lainnya'];
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function defaultDB(){
+ return {
+  settings:{name:'Laundry Bersih',address:'Jl. Contoh No. 1',phone:'08123456789',footer:'Terima kasih! Cucian yang tidak diambil >30 hari di luar tanggung jawab kami.',prefix:'LDR',expressPct:50},
+  services:[
+   {id:uid(),name:'Cuci Kering Setrika',unit:'kg',price:7000,days:2},
+   {id:uid(),name:'Cuci Kering',unit:'kg',price:5000,days:2},
+   {id:uid(),name:'Setrika Saja',unit:'kg',price:4000,days:1},
+   {id:uid(),name:'Bed Cover',unit:'pcs',price:25000,days:3},
+   {id:uid(),name:'Selimut',unit:'pcs',price:15000,days:3},
+   {id:uid(),name:'Jas / Blazer',unit:'pcs',price:20000,days:3},
+   {id:uid(),name:'Sepatu',unit:'pasang',price:30000,days:3},
+   {id:uid(),name:'Karpet',unit:'m2',price:15000,days:4}],
+  customers:[],orders:[],expenses:[],seq:1
+ };
+}
+let mem=null;
+function load(){
+ try{const s=localStorage.getItem(KEY);if(s)return JSON.parse(s)}catch(e){}
+ return mem||defaultDB();
+}
+let db=load();
+function save(){mem=db;try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}}
+save();
+
+/* ================= UTIL ================= */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rp=n=>'Rp '+Math.round(n||0).toLocaleString('id-ID');
+const num=v=>parseFloat(String(v).replace(',','.'))||0;
+const pad=n=>String(n).padStart(2,'0');
+const dKey=d=>{d=new Date(d);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+const fDate=d=>new Date(d).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+const fDT=d=>new Date(d).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+const today=()=>dKey(new Date());
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2200)}
+const cust=id=>db.customers.find(c=>c.id===id)||{name:'(terhapus)',phone:''};
+const paid=o=>o.payments.reduce((a,p)=>a+p.amount,0);
+const due=o=>Math.max(0,o.total-paid(o));
+function payStatus(o){const p=paid(o);if(p>=o.total)return['lunas','Lunas'];if(p>0)return['dp','DP'];return['belum','Belum Bayar']}
+const stName=k=>(STATUSES.find(s=>s.k===k)||{}).n||k;
+const badge=k=>`<span class="badge s-${k}">${stName(k)}</span>`;
+const pbadge=o=>{const[c,n]=payStatus(o);return`<span class="badge p-${c}">${n}</span>`};
+function waNum(p){p=String(p||'').replace(/\D/g,'');if(p.startsWith('0'))p='62'+p.slice(1);return p}
+function openModal(html,wide){$('#modal').className='modal'+(wide?' wide':'');$('#modal').innerHTML=html;$('#modalBg').classList.add('show')}
+function closeModal(){$('#modalBg').classList.remove('show')}
+$('#modalBg').addEventListener('mousedown',e=>{if(e.target.id==='modalBg')closeModal()});
+
+/* ================= NAV ================= */
+const VIEWS=[
+ ['dashboard','📊','Dashboard'],['kasir','🧾','Kasir / Order Baru'],['orders','👕','Daftar Order'],
+ ['customers','👥','Pelanggan'],['services','🏷️','Layanan & Harga'],['finance','💰','Keuangan'],['settings','⚙️','Pengaturan']];
+let view='dashboard';
+function go(v){view=v;render()}
+function renderNav(){
+ $('#brand').innerHTML=esc(db.settings.name)+'<small>Kasir Laundry</small>';
+ $('#nav').innerHTML=VIEWS.map(([k,i,n])=>`<button class="${view===k?'active':''}" onclick="go('${k}')"><span>${i}</span>${n}</button>`).join('');
+}
+function render(){renderNav();({dashboard:vDash,kasir:vKasir,orders:vOrders,customers:vCust,services:vSvc,finance:vFin,settings:vSet})[view]();window.scrollTo(0,0)}
+
+/* ================= DASHBOARD ================= */
+function vDash(){
+ const t=today();
+ const incToday=db.orders.flatMap(o=>o.payments).filter(p=>dKey(p.date)===t).reduce((a,p)=>a+p.amount,0);
+ const ordToday=db.orders.filter(o=>dKey(o.createdAt)===t).length;
+ const active=db.orders.filter(o=>o.status!=='diambil');
+ const ready=db.orders.filter(o=>o.status==='siap');
+ const piut=db.orders.reduce((a,o)=>a+due(o),0);
+ const late=active.filter(o=>o.status!=='siap'&&new Date(o.dueAt)<new Date());
+ const counts=STATUSES.map(s=>({...s,c:db.orders.filter(o=>o.status===s.k).length}));
+ // 14 days income
+ const days=[];for(let i=13;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push(dKey(d))}
+ const inc=days.map(k=>db.orders.flatMap(o=>o.payments).filter(p=>dKey(p.date)===k).reduce((a,p)=>a+p.amount,0));
+ const mx=Math.max(...inc,1);
+ const recent=[...db.orders].sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).slice(0,8);
+ $('#main').innerHTML=`
+ <div class="row" style="justify-content:space-between;margin-bottom:16px"><h1 style="margin:0">Dashboard</h1><button class="btn" onclick="go('kasir')">+ Order Baru</button></div>
+ <div class="grid g4">
+  <div class="card stat"><div class="lbl">Pemasukan Hari Ini</div><div class="val">${rp(incToday)}</div><div class="sub">${ordToday} order masuk hari ini</div></div>
+  <div class="card stat"><div class="lbl">Cucian Diproses</div><div class="val">${active.length-ready.length}</div><div class="sub">${late.length?`<span style="color:var(--err)">${late.length} lewat estimasi</span>`:'Semua sesuai estimasi'}</div></div>
+  <div class="card stat"><div class="lbl">Siap Diambil</div><div class="val">${ready.length}</div><div class="sub">Menunggu pelanggan</div></div>
+  <div class="card stat"><div class="lbl">Piutang (Belum Lunas)</div><div class="val">${rp(piut)}</div><div class="sub">${db.orders.filter(o=>due(o)>0).length} order</div></div>
+ </div>
+ <div class="grid g2">
+  <div class="card"><h2>Pemasukan 14 Hari Terakhir</h2>
+   <div class="bars">${inc.map((v,i)=>`<div class="b" title="${fDate(days[i])}: ${rp(v)}"><i style="height:${v/mx*100}%"></i><span>${days[i].slice(8)}</span></div>`).join('')}</div>
+  </div>
+  <div class="card"><h2>Status Cucian</h2>
+   <table>${counts.map(s=>`<tr><td>${badge(s.k)}</td><td class="r"><b>${s.c}</b> order</td><td class="r"><button class="btn sm sec" onclick="ordFilter='${s.k}';go('orders')">Lihat</button></td></tr>`).join('')}</table>
+  </div>
+ </div>
+ <div class="card"><h2>Order Terbaru</h2>${orderTable(recent)}</div>`;
+}
+
+/* ================= KASIR ================= */
+let cart=null;
+function newCart(){cart={customerId:'',items:[],express:false,discount:0,note:'',payAmount:0,method:'Tunai'}}
+function vKasir(){
+ if(!cart)newCart();
+ const svc=db.services;
+ $('#main').innerHTML=`
+ <h1>Kasir / Order Baru</h1>
+ <div class="grid g2" style="align-items:start">
+  <div>
+   <div class="card"><h2>Pelanggan</h2>
+    <div class="row"><div class="grow"><select id="kCust" onchange="cart.customerId=this.value;vKasir()">
+     <option value="">— Pilih pelanggan —</option>
+     ${[...db.customers].sort((a,b)=>a.name.localeCompare(b.name)).map(c=>`<option value="${c.id}" ${c.id===cart.customerId?'selected':''}>${esc(c.name)} · ${esc(c.phone)}</option>`).join('')}
+    </select></div><button class="btn sec" onclick="custForm(null,true)">+ Baru</button></div>
+   </div>
+   <div class="card"><h2>Pilih Layanan</h2>
+    ${svc.length?`<div class="svc-pick">${svc.map(s=>`<button onclick="addItem('${s.id}')"><b>${esc(s.name)}</b><small>${rp(s.price)}/${esc(s.unit)} · ${s.days} hari</small></button>`).join('')}</div>`:'<div class="empty">Belum ada layanan. Tambahkan di menu Layanan & Harga.</div>'}
+   </div>
+  </div>
+  <div class="card"><h2>Rincian Order</h2>
+   ${cart.items.length?`<table><tr><th>Layanan</th><th>Jumlah</th><th class="r">Subtotal</th><th></th></tr>
+    ${cart.items.map((it,i)=>`<tr><td>${esc(it.name)}<div class="mut" style="font-size:12px">${rp(it.price)}/${esc(it.unit)}</div></td>
+     <td><div class="row" style="gap:4px;flex-wrap:nowrap"><input class="qty" type="number" min="0" step="${it.unit==='kg'||it.unit==='m2'?'0.1':'1'}" value="${it.qty}" oninput="setQty(${i},this.value)"><span class="mut">${esc(it.unit)}</span></div></td>
+     <td class="r" id="sub${i}">${rp(it.price*it.qty)}</td><td><button class="btn sm sec" onclick="cart.items.splice(${i},1);vKasir()">✕</button></td></tr>`).join('')}</table>`
+   :'<div class="empty">Klik layanan di sebelah kiri untuk menambahkan.</div>'}
+   <div class="row" style="margin:14px 0 10px"><label style="display:flex;gap:8px;align-items:center;margin:0;color:var(--tx);font-size:14px;cursor:pointer"><input type="checkbox" style="width:auto" ${cart.express?'checked':''} onchange="cart.express=this.checked;calc()"> Express (+${db.settings.expressPct}%, selesai lebih cepat)</label></div>
+   <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px">
+    <div class="f"><label>Diskon (Rp)</label><input type="number" min="0" value="${cart.discount||''}" oninput="cart.discount=num(this.value);calc()"></div>
+    <div class="f"><label>Estimasi Selesai</label><input id="kDue" type="date" value="${dKey(estDue())}" disabled></div>
+   </div>
+   <div class="f"><label>Catatan (noda, parfum, dll)</label><input value="${esc(cart.note)}" oninput="cart.note=this.value"></div>
+   <div class="total-box" id="kTotal"></div>
+   <h2 style="margin-top:16px">Pembayaran</h2>
+   <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px">
+    <div class="f"><label>Dibayar Sekarang (Rp)</label><input id="kPay" type="number" min="0" value="${cart.payAmount||''}" oninput="cart.payAmount=num(this.value);calc()"></div>
+    <div class="f"><label>Metode</label><select onchange="cart.method=this.value">${METHODS.map(m=>`<option ${m===cart.method?'selected':''}>${m}</option>`).join('')}</select></div>
+   </div>
+   <div class="row" style="margin-bottom:12px"><button class="btn sm sec" onclick="cart.payAmount=cartTotal().total;$('#kPay').value=cart.payAmount;calc()">Bayar Lunas</button><button class="btn sm sec" onclick="cart.payAmount=0;$('#kPay').value='';calc()">Bayar Nanti</button></div>
+   <div class="row"><button class="btn ok grow" style="padding:12px" onclick="submitOrder()">💾 Simpan Order</button><button class="btn sec" onclick="newCart();vKasir()">Reset</button></div>
+  </div>
+ </div>`;
+ calc();
+}
+function addItem(id){
+ const s=db.services.find(x=>x.id===id);
+ const ex=cart.items.find(i=>i.serviceId===id);
+ if(ex)ex.qty=+(ex.qty+1).toFixed(2);else cart.items.push({serviceId:s.id,name:s.name,unit:s.unit,price:s.price,days:s.days,qty:1});
+ vKasir();
+}
+function setQty(i,v){cart.items[i].qty=num(v);$('#sub'+i).textContent=rp(cart.items[i].price*cart.items[i].qty);calc()}
+function cartTotal(){
+ const sub=cart.items.reduce((a,i)=>a+i.price*i.qty,0);
+ const exp=cart.express?Math.round(sub*db.settings.expressPct/100):0;
+ const total=Math.max(0,Math.round(sub+exp-(cart.discount||0)));
+ return{sub,exp,total};
+}
+function estDue(){
+ const d=Math.max(1,...cart.items.map(i=>i.days||1));
+ const days=cart.express?Math.max(1,Math.ceil(d/2))-(d<=1?1:0):d;
+ const r=new Date();r.setDate(r.getDate()+Math.max(0,days));return r;
+}
+function calc(){
+ const t=cartTotal();const pay=Math.min(cart.payAmount||0,t.total);
+ const kd=$('#kDue');if(kd)kd.value=dKey(estDue());
+ $('#kTotal').innerHTML=`
+  <div class="row"><span>Subtotal</span><span>${rp(t.sub)}</span></div>
+  ${t.exp?`<div class="row"><span>Biaya Express</span><span>${rp(t.exp)}</span></div>`:''}
+  ${cart.discount?`<div class="row"><span>Diskon</span><span>- ${rp(cart.discount)}</span></div>`:''}
+  <div class="row" style="margin-top:6px"><span><b>Total</b></span><span class="big">${rp(t.total)}</span></div>
+  ${(cart.payAmount||0)>t.total?`<div class="row"><span>Kembalian</span><span><b>${rp(cart.payAmount-t.total)}</b></span></div>`:`<div class="row"><span>Sisa Tagihan</span><span>${rp(t.total-pay)}</span></div>`}`;
+}
+function submitOrder(){
+ if(!cart.customerId)return toast('Pilih pelanggan dulu');
+ const items=cart.items.filter(i=>i.qty>0);
+ if(!items.length)return toast('Tambahkan minimal 1 layanan');
+ const t=cartTotal();const now=new Date().toISOString();
+ const pay=Math.min(cart.payAmount||0,t.total);
+ const d=new Date();const code=db.settings.prefix+d.getFullYear().toString().slice(2)+pad(d.getMonth()+1)+pad(d.getDate())+'-'+String(db.seq++).padStart(4,'0');
+ const o={id:uid(),code,customerId:cart.customerId,items:items.map(i=>({name:i.name,unit:i.unit,price:i.price,qty:i.qty})),
+  subtotal:t.sub,expressFee:t.exp,express:cart.express,discount:cart.discount||0,total:t.total,note:cart.note,
+  payments:pay>0?[{date:now,amount:pay,method:cart.method}]:[],status:'diterima',history:[{status:'diterima',date:now}],
+  createdAt:now,dueAt:estDue().toISOString(),change:Math.max(0,(cart.payAmount||0)-t.total)};
+ db.orders.push(o);save();newCart();toast('Order '+code+' tersimpan');
+ showOrder(o.id);vKasir();
+}
+
+/* ================= ORDERS ================= */
+let ordFilter='aktif',ordQ='';
+function orderTable(list,actions=true){
+ if(!list.length)return'<div class="empty">Belum ada order.</div>';
+ return`<div style="overflow-x:auto"><table><tr><th>No. Nota</th><th>Pelanggan</th><th class="hide-m">Masuk</th><th class="hide-m">Estimasi</th><th class="r">Total</th><th>Bayar</th><th>Status</th>${actions?'<th></th>':''}</tr>
+ ${list.map(o=>{const c=cust(o.customerId);const late=o.status!=='diambil'&&o.status!=='siap'&&new Date(o.dueAt)<new Date();
+  return`<tr><td><a href="#" onclick="showOrder('${o.id}');return false"><b>${esc(o.code)}</b></a>${o.express?' <span class="badge p-dp">Express</span>':''}</td>
+  <td>${esc(c.name)}<div class="mut" style="font-size:12px">${esc(c.phone)}</div></td>
+  <td class="hide-m">${fDate(o.createdAt)}</td><td class="hide-m" ${late?'style="color:var(--err);font-weight:600"':''}>${fDate(o.dueAt)}</td>
+  <td class="r">${rp(o.total)}</td><td>${pbadge(o)}</td><td>${badge(o.status)}</td>
+  ${actions?`<td class="r" style="white-space:nowrap">${nextBtn(o)}</td>`:''}</tr>`}).join('')}</table></div>`;
+}
+function nextBtn(o){
+ const i=STATUSES.findIndex(s=>s.k===o.status);
+ if(i>=STATUSES.length-1)return`<button class="btn sm sec" onclick="showOrder('${o.id}')">Detail</button>`;
+ const n=STATUSES[i+1];
+ return`<button class="btn sm ${n.k==='diambil'?'ok':''}" onclick="advance('${o.id}')">→ ${n.n}</button>`;
+}
+function advance(id){
+ const o=db.orders.find(x=>x.id===id);const i=STATUSES.findIndex(s=>s.k===o.status);
+ const n=STATUSES[i+1];if(!n)return;
+ if(n.k==='diambil'&&due(o)>0){
+  if(!confirm(`Order ini masih ada sisa tagihan ${rp(due(o))}.\nCatat pelunasan (Tunai) sekarang dan tandai diambil?`))return;
+  o.payments.push({date:new Date().toISOString(),amount:due(o),method:'Tunai'});
+ }
+ setStatus(o,n.k);
+ if(n.k==='siap'&&cust(o.customerId).phone&&confirm('Status: Siap Diambil.\nKirim notifikasi WhatsApp ke pelanggan?'))sendWA(o.id,'siap');
+}
+function setStatus(o,k){o.status=k;o.history.push({status:k,date:new Date().toISOString()});save();toast(`${o.code}: ${stName(k)}`);render();if($('#modalBg').classList.contains('show'))showOrder(o.id)}
+function vOrders(){
+ let list=[...db.orders].sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+ if(ordFilter==='aktif')list=list.filter(o=>o.status!=='diambil');
+ else if(ordFilter==='belum')list=list.filter(o=>due(o)>0);
+ else if(ordFilter!=='semua')list=list.filter(o=>o.status===ordFilter);
+ const q=ordQ.toLowerCase();
+ if(q)list=list.filter(o=>{const c=cust(o.customerId);return(o.code+' '+c.name+' '+c.phone).toLowerCase().includes(q)});
+ const tabs=[['aktif','Aktif'],...STATUSES.map(s=>[s.k,s.n]),['belum','Belum Lunas'],['semua','Semua']];
+ $('#main').innerHTML=`
+ <div class="row" style="justify-content:space-between;margin-bottom:16px"><h1 style="margin:0">Daftar Order</h1><button class="btn" onclick="go('kasir')">+ Order Baru</button></div>
+ <div class="card">
+  <div class="tabs">${tabs.map(([k,n])=>`<button class="${ordFilter===k?'active':''}" onclick="ordFilter='${k}';vOrders()">${n}</button>`).join('')}</div>
+  <div class="f"><input id="oq" placeholder="Cari no. nota, nama, atau no. HP..." value="${esc(ordQ)}" oninput="ordQ=this.value;clearTimeout(window._oq);window._oq=setTimeout(()=>{vOrders();const e=$('#oq');e.focus();e.setSelectionRange(e.value.length,e.value.length)},250)"></div>
+  ${orderTable(list)}
+ </div>`;
+}
+function showOrder(id){
+ const o=db.orders.find(x=>x.id===id);if(!o)return;const c=cust(o.customerId);
+ openModal(`<h2>Order ${esc(o.code)} <button class="x" onclick="closeModal()">×</button></h2>
+ <div class="row" style="margin-bottom:12px">${badge(o.status)} ${pbadge(o)} ${o.express?'<span class="badge p-dp">Express</span>':''}</div>
+ <div class="grid" style="grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+  <div><label>Pelanggan</label><b>${esc(c.name)}</b><div class="mut">${esc(c.phone)}</div></div>
+  <div><label>Masuk / Estimasi</label>${fDT(o.createdAt)}<div class="mut">Selesai: ${fDate(o.dueAt)}</div></div>
+ </div>
+ <table><tr><th>Layanan</th><th>Jml</th><th class="r">Subtotal</th></tr>
+ ${o.items.map(i=>`<tr><td>${esc(i.name)}</td><td>${i.qty} ${esc(i.unit)}</td><td class="r">${rp(i.price*i.qty)}</td></tr>`).join('')}
+ ${o.expressFee?`<tr><td colspan="2">Biaya Express</td><td class="r">${rp(o.expressFee)}</td></tr>`:''}
+ ${o.discount?`<tr><td colspan="2">Diskon</td><td class="r">- ${rp(o.discount)}</td></tr>`:''}
+ <tr><td colspan="2"><b>Total</b></td><td class="r"><b>${rp(o.total)}</b></td></tr>
+ <tr><td colspan="2">Sudah Dibayar</td><td class="r">${rp(paid(o))}</td></tr>
+ <tr><td colspan="2"><b>Sisa</b></td><td class="r"><b style="color:${due(o)?'var(--err)':'var(--ok)'}">${rp(due(o))}</b></td></tr></table>
+ ${o.note?`<p><span class="mut">Catatan:</span> ${esc(o.note)}</p>`:''}
+ ${o.payments.length?`<p class="mut" style="margin:10px 0 4px">Riwayat pembayaran</p>${o.payments.map(p=>`<div style="font-size:13px">${fDT(p.date)} · ${p.method} · <b>${rp(p.amount)}</b></div>`).join('')}`:''}
+ <p class="mut" style="margin:10px 0 4px">Riwayat status</p>
+ <div style="font-size:13px">${o.history.map(h=>`${fDT(h.date)} — ${stName(h.status)}`).join('<br>')}</div>
+ <div class="f" style="margin-top:14px"><label>Ubah status</label><select onchange="setStatus(db.orders.find(x=>x.id==='${o.id}'),this.value)">${STATUSES.map(s=>`<option value="${s.k}" ${s.k===o.status?'selected':''}>${s.n}</option>`).join('')}</select></div>
+ ${due(o)>0?`<div class="card" style="background:#fafbfd"><b>Tambah Pembayaran</b><div class="row" style="margin-top:8px">
+  <input id="pAmt" type="number" class="grow" style="width:auto" value="${due(o)}"><select id="pMet" style="width:120px">${METHODS.map(m=>`<option>${m}</option>`).join('')}</select>
+  <button class="btn ok" onclick="addPay('${o.id}')">Bayar</button></div></div>`:''}
+ <div class="row" style="margin-top:6px">
+  <button class="btn" onclick="printNota('${o.id}')">🖨️ Cetak Nota</button>
+  <button class="btn sec" onclick="sendWA('${o.id}','nota')">📱 Nota via WA</button>
+  ${o.status==='siap'?`<button class="btn sec" onclick="sendWA('${o.id}','siap')">📢 Info Siap Ambil</button>`:''}
+  <button class="btn err" style="margin-left:auto" onclick="delOrder('${o.id}')">Hapus</button>
+ </div>`,true);
+}
+function addPay(id){
+ const o=db.orders.find(x=>x.id===id);const a=Math.min(num($('#pAmt').value),due(o));
+ if(a<=0)return toast('Nominal tidak valid');
+ o.payments.push({date:new Date().toISOString(),amount:a,method:$('#pMet').value});save();toast('Pembayaran dicatat');render();showOrder(id);
+}
+function delOrder(id){if(!confirm('Hapus order ini? Data pembayaran juga ikut terhapus.'))return;db.orders=db.orders.filter(o=>o.id!==id);save();closeModal();render();toast('Order dihapus')}
+function notaText(o){
+ const s=db.settings,c=cust(o.customerId);
+ let t=`*${s.name}*\n${s.address}\nTelp: ${s.phone}\n\nNota: *${o.code}*\nPelanggan: ${c.name}\nMasuk: ${fDT(o.createdAt)}\nEstimasi selesai: ${fDate(o.dueAt)}\n\n`;
+ o.items.forEach(i=>t+=`${i.name}\n  ${i.qty} ${i.unit} x ${rp(i.price)} = ${rp(i.price*i.qty)}\n`);
+ if(o.expressFee)t+=`Express: ${rp(o.expressFee)}\n`;
+ if(o.discount)t+=`Diskon: -${rp(o.discount)}\n`;
+ t+=`\n*Total: ${rp(o.total)}*\nDibayar: ${rp(paid(o))}\nSisa: ${rp(due(o))} (${payStatus(o)[1]})\n\n${s.footer}`;
+ return t;
+}
+function sendWA(id,type){
+ const o=db.orders.find(x=>x.id===id),c=cust(o.customerId),s=db.settings;
+ const msg=type==='siap'
+  ?`Halo ${c.name}, cucian Anda dengan nota *${o.code}* sudah *SIAP DIAMBIL* di ${s.name}.\n${due(o)>0?`Sisa pembayaran: *${rp(due(o))}*\n`:''}\nTerima kasih 🙏`
+  :notaText(o);
+ window.open('https://wa.me/'+waNum(c.phone)+'?text='+encodeURIComponent(msg),'_blank');
+}
+function printNota(id){
+ const o=db.orders.find(x=>x.id===id),c=cust(o.customerId),s=db.settings;
+ const L=(a,b)=>`<div class="l"><span>${a}</span><span>${b}</span></div>`;
+ $('#print-area').innerHTML=`<div class="nota">
+  <div class="c"><b style="font-size:15px">${esc(s.name)}</b><br>${esc(s.address)}<br>Telp ${esc(s.phone)}</div><hr>
+  ${L('Nota',esc(o.code))}${L('Pelanggan',esc(c.name))}${L('Masuk',fDT(o.createdAt))}${L('Selesai',fDate(o.dueAt))}<hr>
+  ${o.items.map(i=>`<div>${esc(i.name)}</div>${L(`&nbsp;${i.qty} ${esc(i.unit)} x ${rp(i.price)}`,rp(i.price*i.qty))}`).join('')}<hr>
+  ${o.expressFee?L('Express',rp(o.expressFee)):''}${o.discount?L('Diskon','-'+rp(o.discount)):''}
+  ${L('<b>TOTAL</b>','<b>'+rp(o.total)+'</b>')}${L('Dibayar',rp(paid(o)))}${L('Sisa',rp(due(o)))}${L('Status',payStatus(o)[1].toUpperCase())}
+  ${o.note?`<hr>Catatan: ${esc(o.note)}`:''}<hr><div class="c">${esc(s.footer)}</div></div>`;
+ window.print();
+}
+
+/* ================= CUSTOMERS ================= */
+let custQ='';
+function vCust(){
+ const q=custQ.toLowerCase();
+ const list=db.customers.filter(c=>(c.name+' '+c.phone).toLowerCase().includes(q)).sort((a,b)=>a.name.localeCompare(b.name));
+ $('#main').innerHTML=`
+ <div class="row" style="justify-content:space-between;margin-bottom:16px"><h1 style="margin:0">Pelanggan</h1><button class="btn" onclick="custForm()">+ Pelanggan Baru</button></div>
+ <div class="card"><div class="f"><input id="cq" placeholder="Cari nama atau no. HP..." value="${esc(custQ)}" oninput="custQ=this.value;vCust();const e=$('#cq');e.focus();e.setSelectionRange(e.value.length,e.value.length)"></div>
+ ${list.length?`<div style="overflow-x:auto"><table><tr><th>Nama</th><th>No. HP</th><th class="hide-m">Alamat</th><th class="r">Order</th><th class="r">Total Belanja</th><th class="r">Piutang</th><th></th></tr>
+ ${list.map(c=>{const os=db.orders.filter(o=>o.customerId===c.id);const pi=os.reduce((a,o)=>a+due(o),0);
+  return`<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.phone)}</td><td class="hide-m">${esc(c.address)}</td><td class="r">${os.length}</td><td class="r">${rp(os.reduce((a,o)=>a+o.total,0))}</td>
+  <td class="r" ${pi?'style="color:var(--err)"':''}>${rp(pi)}</td>
+  <td class="r" style="white-space:nowrap"><button class="btn sm" onclick="cart=cart||{};newCart();cart.customerId='${c.id}';go('kasir')">Order</button> <button class="btn sm sec" onclick="custForm('${c.id}')">Edit</button></td></tr>`}).join('')}</table></div>`
+ :'<div class="empty">Belum ada pelanggan.</div>'}</div>`;
+}
+function custForm(id,fromKasir){
+ const c=id?db.customers.find(x=>x.id===id):{name:'',phone:'',address:''};
+ openModal(`<h2>${id?'Edit':'Tambah'} Pelanggan <button class="x" onclick="closeModal()">×</button></h2>
+ <div class="f"><label>Nama *</label><input id="cN" value="${esc(c.name)}"></div>
+ <div class="f"><label>No. HP / WhatsApp</label><input id="cP" value="${esc(c.phone)}" placeholder="08xxxxxxxxxx"></div>
+ <div class="f"><label>Alamat</label><textarea id="cA" rows="2">${esc(c.address)}</textarea></div>
+ <div class="row"><button class="btn" onclick="saveCust('${id||''}',${!!fromKasir})">Simpan</button>
+ ${id?`<button class="btn err" style="margin-left:auto" onclick="delCust('${id}')">Hapus</button>`:''}</div>`);
+ setTimeout(()=>$('#cN').focus(),50);
+}
+function saveCust(id,fromKasir){
+ const name=$('#cN').value.trim();if(!name)return toast('Nama wajib diisi');
+ const data={name,phone:$('#cP').value.trim(),address:$('#cA').value.trim()};
+ if(id)Object.assign(db.customers.find(x=>x.id===id),data);
+ else{const c={id:uid(),...data,createdAt:new Date().toISOString()};db.customers.push(c);if(fromKasir){if(!cart)newCart();cart.customerId=c.id}}
+ save();closeModal();render();toast('Pelanggan disimpan');
+}
+function delCust(id){
+ if(db.orders.some(o=>o.customerId===id))return toast('Tidak bisa dihapus: pelanggan punya riwayat order');
+ if(!confirm('Hapus pelanggan ini?'))return;db.customers=db.customers.filter(c=>c.id!==id);save();closeModal();render();
+}
+
+/* ================= SERVICES ================= */
+function vSvc(){
+ $('#main').innerHTML=`
+ <div class="row" style="justify-content:space-between;margin-bottom:16px"><h1 style="margin:0">Layanan & Harga</h1><button class="btn" onclick="svcForm()">+ Layanan Baru</button></div>
+ <div class="card">${db.services.length?`<table><tr><th>Nama Layanan</th><th>Satuan</th><th class="r">Harga</th><th class="r">Durasi</th><th></th></tr>
+ ${db.services.map(s=>`<tr><td><b>${esc(s.name)}</b></td><td>${esc(s.unit)}</td><td class="r">${rp(s.price)}</td><td class="r">${s.days} hari</td><td class="r"><button class="btn sm sec" onclick="svcForm('${s.id}')">Edit</button></td></tr>`).join('')}</table>`:'<div class="empty">Belum ada layanan.</div>'}
+ <p class="mut" style="margin-bottom:0">Order Express menambah biaya ${db.settings.expressPct}% dan memangkas durasi jadi setengahnya. Atur di menu Pengaturan.</p></div>`;
+}
+function svcForm(id){
+ const s=id?db.services.find(x=>x.id===id):{name:'',unit:'kg',price:'',days:2};
+ const units=['kg','pcs','pasang','m2','set'];
+ openModal(`<h2>${id?'Edit':'Tambah'} Layanan <button class="x" onclick="closeModal()">×</button></h2>
+ <div class="f"><label>Nama Layanan *</label><input id="sN" value="${esc(s.name)}" placeholder="mis. Cuci Kering Setrika"></div>
+ <div class="grid" style="grid-template-columns:1fr 1fr 1fr;gap:10px">
+  <div class="f"><label>Satuan</label><select id="sU">${units.map(u=>`<option ${u===s.unit?'selected':''}>${u}</option>`).join('')}</select></div>
+  <div class="f"><label>Harga (Rp) *</label><input id="sP" type="number" min="0" value="${s.price}"></div>
+  <div class="f"><label>Durasi (hari)</label><input id="sD" type="number" min="0" value="${s.days}"></div>
+ </div>
+ <div class="row"><button class="btn" onclick="saveSvc('${id||''}')">Simpan</button>${id?`<button class="btn err" style="margin-left:auto" onclick="delSvc('${id}')">Hapus</button>`:''}</div>`);
+}
+function saveSvc(id){
+ const name=$('#sN').value.trim(),price=num($('#sP').value);
+ if(!name||price<=0)return toast('Nama dan harga wajib diisi');
+ const d={name,unit:$('#sU').value,price,days:Math.max(0,parseInt($('#sD').value)||0)};
+ if(id)Object.assign(db.services.find(x=>x.id===id),d);else db.services.push({id:uid(),...d});
+ save();closeModal();render();toast('Layanan disimpan');
+}
+function delSvc(id){if(!confirm('Hapus layanan ini? Order lama tidak terpengaruh.'))return;db.services=db.services.filter(s=>s.id!==id);save();closeModal();render()}
+
+/* ================= FINANCE ================= */
+let finFrom,finTo;
+function vFin(){
+ if(!finFrom){const d=new Date();finFrom=dKey(new Date(d.getFullYear(),d.getMonth(),1));finTo=today()}
+ const inR=d=>{const k=dKey(d);return k>=finFrom&&k<=finTo};
+ const pays=db.orders.flatMap(o=>o.payments.map(p=>({...p,o}))).filter(p=>inR(p.date));
+ const income=pays.reduce((a,p)=>a+p.amount,0);
+ const exps=db.expenses.filter(e=>e.date>=finFrom&&e.date<=finTo).sort((a,b)=>b.date.localeCompare(a.date));
+ const expTot=exps.reduce((a,e)=>a+e.amount,0);
+ const ordersIn=db.orders.filter(o=>inR(o.createdAt));
+ const sales=ordersIn.reduce((a,o)=>a+o.total,0);
+ const byMethod=METHODS.map(m=>[m,pays.filter(p=>p.method===m).reduce((a,p)=>a+p.amount,0)]);
+ const byCat={};exps.forEach(e=>byCat[e.category]=(byCat[e.category]||0)+e.amount);
+ const svcSum={};ordersIn.forEach(o=>o.items.forEach(i=>{svcSum[i.name]=svcSum[i.name]||{q:0,v:0,u:i.unit};svcSum[i.name].q+=i.qty;svcSum[i.name].v+=i.price*i.qty}));
+ const piut=db.orders.filter(o=>due(o)>0).sort((a,b)=>a.createdAt.localeCompare(b.createdAt));
+ $('#main').innerHTML=`
+ <h1>Keuangan</h1>
+ <div class="card row">
+  <div><label>Dari</label><input type="date" value="${finFrom}" onchange="finFrom=this.value;vFin()"></div>
+  <div><label>Sampai</label><input type="date" value="${finTo}" onchange="finTo=this.value;vFin()"></div>
+  <div style="align-self:flex-end" class="row">
+   <button class="btn sm sec" onclick="finFrom=finTo=today();vFin()">Hari Ini</button>
+   <button class="btn sm sec" onclick="const d=new Date();finFrom=dKey(new Date(d.getFullYear(),d.getMonth(),1));finTo=today();vFin()">Bulan Ini</button>
+   <button class="btn sm sec" onclick="const d=new Date();finFrom=dKey(new Date(d.getFullYear(),d.getMonth()-1,1));finTo=dKey(new Date(d.getFullYear(),d.getMonth(),0));vFin()">Bulan Lalu</button>
+   <button class="btn sm sec" onclick="exportCSV()">⬇️ Export CSV</button>
+  </div>
+ </div>
+ <div class="grid g4">
+  <div class="card stat"><div class="lbl">Pemasukan (Kas Masuk)</div><div class="val" style="color:var(--ok)">${rp(income)}</div><div class="sub">${pays.length} pembayaran</div></div>
+  <div class="card stat"><div class="lbl">Pengeluaran</div><div class="val" style="color:var(--err)">${rp(expTot)}</div><div class="sub">${exps.length} transaksi</div></div>
+  <div class="card stat"><div class="lbl">Laba Bersih</div><div class="val">${rp(income-expTot)}</div><div class="sub">Pemasukan − pengeluaran</div></div>
+  <div class="card stat"><div class="lbl">Omzet Order</div><div class="val">${rp(sales)}</div><div class="sub">${ordersIn.length} order dibuat</div></div>
+ </div>
+ <div class="grid g2">
+  <div class="card"><h2>Pemasukan per Metode</h2><table>${byMethod.map(([m,v])=>`<tr><td>${m}</td><td class="r"><b>${rp(v)}</b></td></tr>`).join('')}</table></div>
+  <div class="card"><h2>Layanan Terlaris</h2>${Object.keys(svcSum).length?`<table><tr><th>Layanan</th><th class="r">Jumlah</th><th class="r">Nilai</th></tr>${Object.entries(svcSum).sort((a,b)=>b[1].v-a[1].v).map(([n,s])=>`<tr><td>${esc(n)}</td><td class="r">${+s.q.toFixed(2)} ${esc(s.u)}</td><td class="r">${rp(s.v)}</td></tr>`).join('')}</table>`:'<div class="empty">Belum ada data.</div>'}</div>
+ </div>
+ <div class="card"><div class="row" style="justify-content:space-between;margin-bottom:10px"><h2 style="margin:0">Pengeluaran</h2><button class="btn sm" onclick="expForm()">+ Catat Pengeluaran</button></div>
+  ${Object.keys(byCat).length?`<div class="row" style="margin-bottom:10px">${Object.entries(byCat).map(([k,v])=>`<span class="badge s-diterima">${esc(k)}: ${rp(v)}</span>`).join('')}</div>`:''}
+  ${exps.length?`<table><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th class="r">Jumlah</th><th></th></tr>${exps.map(e=>`<tr><td>${fDate(e.date)}</td><td>${esc(e.category)}</td><td>${esc(e.note)}</td><td class="r">${rp(e.amount)}</td><td class="r"><button class="btn sm sec" onclick="expForm('${e.id}')">Edit</button></td></tr>`).join('')}</table>`:'<div class="empty">Belum ada pengeluaran di periode ini.</div>'}
+ </div>
+ <div class="card"><h2>Piutang — Order Belum Lunas (semua periode)</h2>
+  ${piut.length?`<table><tr><th>Nota</th><th>Pelanggan</th><th>Tanggal</th><th class="r">Total</th><th class="r">Sisa</th><th></th></tr>${piut.map(o=>`<tr><td>${esc(o.code)}</td><td>${esc(cust(o.customerId).name)}</td><td>${fDate(o.createdAt)}</td><td class="r">${rp(o.total)}</td><td class="r" style="color:var(--err)"><b>${rp(due(o))}</b></td><td class="r"><button class="btn sm" onclick="showOrder('${o.id}')">Tagih</button></td></tr>`).join('')}
+  <tr><td colspan="4"><b>Total Piutang</b></td><td class="r"><b>${rp(piut.reduce((a,o)=>a+due(o),0))}</b></td><td></td></tr></table>`:'<div class="empty">Semua order sudah lunas 🎉</div>'}
+ </div>
+ <div class="card"><h2>Rincian Pembayaran Masuk</h2>
+  ${pays.length?`<div style="overflow-x:auto"><table><tr><th>Waktu</th><th>Nota</th><th>Pelanggan</th><th>Metode</th><th class="r">Jumlah</th></tr>${pays.sort((a,b)=>b.date.localeCompare(a.date)).map(p=>`<tr><td>${fDT(p.date)}</td><td>${esc(p.o.code)}</td><td>${esc(cust(p.o.customerId).name)}</td><td>${p.method}</td><td class="r">${rp(p.amount)}</td></tr>`).join('')}</table></div>`:'<div class="empty">Tidak ada pembayaran di periode ini.</div>'}
+ </div>`;
+}
+function expForm(id){
+ const e=id?db.expenses.find(x=>x.id===id):{date:today(),category:EXP_CAT[0],note:'',amount:''};
+ openModal(`<h2>${id?'Edit':'Catat'} Pengeluaran <button class="x" onclick="closeModal()">×</button></h2>
+ <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px">
+  <div class="f"><label>Tanggal</label><input id="eD" type="date" value="${e.date}"></div>
+  <div class="f"><label>Kategori</label><select id="eC">${EXP_CAT.map(c=>`<option ${c===e.category?'selected':''}>${c}</option>`).join('')}</select></div>
+ </div>
+ <div class="f"><label>Keterangan</label><input id="eN" value="${esc(e.note)}"></div>
+ <div class="f"><label>Jumlah (Rp) *</label><input id="eA" type="number" min="0" value="${e.amount}"></div>
+ <div class="row"><button class="btn" onclick="saveExp('${id||''}')">Simpan</button>${id?`<button class="btn err" style="margin-left:auto" onclick="db.expenses=db.expenses.filter(x=>x.id!=='${id}');save();closeModal();render()">Hapus</button>`:''}</div>`);
+}
+function saveExp(id){
+ const amount=num($('#eA').value);if(amount<=0)return toast('Jumlah wajib diisi');
+ const d={date:$('#eD').value||today(),category:$('#eC').value,note:$('#eN').value.trim(),amount};
+ if(id)Object.assign(db.expenses.find(x=>x.id===id),d);else db.expenses.push({id:uid(),...d});
+ save();closeModal();render();toast('Pengeluaran dicatat');
+}
+function exportCSV(){
+ const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+ const rows=[['Tanggal','Jenis','Referensi','Keterangan','Metode','Masuk','Keluar']];
+ db.orders.forEach(o=>o.payments.forEach(p=>{const k=dKey(p.date);if(k>=finFrom&&k<=finTo)rows.push([k,'Pembayaran',o.code,cust(o.customerId).name,p.method,p.amount,0])}));
+ db.expenses.filter(e=>e.date>=finFrom&&e.date<=finTo).forEach(e=>rows.push([e.date,'Pengeluaran',e.category,e.note,'',0,e.amount]));
+ rows.splice(1,rows.length,...rows.slice(1).sort((a,b)=>a[0].localeCompare(b[0])));
+ download(`laporan_${finFrom}_${finTo}.csv`,'﻿'+rows.map(r=>r.map(q).join(',')).join('\n'),'text/csv');
+}
+function download(name,content,type){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
+
+/* ================= SETTINGS ================= */
+function vSet(){
+ const s=db.settings;
+ $('#main').innerHTML=`<h1>Pengaturan</h1>
+ <div class="grid g2" style="align-items:start">
+ <div class="card"><h2>Profil Toko (tampil di nota)</h2>
+  <div class="f"><label>Nama Laundry</label><input id="tN" value="${esc(s.name)}"></div>
+  <div class="f"><label>Alamat</label><input id="tA" value="${esc(s.address)}"></div>
+  <div class="f"><label>No. Telp / WA</label><input id="tP" value="${esc(s.phone)}"></div>
+  <div class="f"><label>Pesan di bawah nota</label><textarea id="tF" rows="2">${esc(s.footer)}</textarea></div>
+  <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px">
+   <div class="f"><label>Prefix No. Nota</label><input id="tX" value="${esc(s.prefix)}"></div>
+   <div class="f"><label>Biaya Express (%)</label><input id="tE" type="number" min="0" value="${s.expressPct}"></div>
+  </div>
+  <button class="btn" onclick="saveSet()">Simpan Pengaturan</button>
+ </div>
+ <div class="card"><h2>Backup & Data</h2>
+  <p class="mut" style="margin-top:0">Data tersimpan di browser perangkat ini. Lakukan backup rutin agar data aman dan bisa dipindah ke perangkat lain.</p>
+  <div class="row" style="margin-bottom:12px"><button class="btn" onclick="download('backup_laundry_'+today()+'.json',JSON.stringify(db,null,1),'application/json')">⬇️ Download Backup</button>
+  <label class="btn sec" style="margin:0;color:var(--tx)">⬆️ Restore Backup<input type="file" accept=".json" style="display:none" onchange="restore(this.files[0])"></label></div>
+  <p class="mut">Ringkasan: ${db.customers.length} pelanggan · ${db.orders.length} order · ${db.services.length} layanan · ${db.expenses.length} pengeluaran</p>
+  <div class="row"><button class="btn sec" onclick="seedDemo()">Isi Data Contoh</button><button class="btn err" onclick="if(confirm('Hapus SEMUA data? Tindakan ini tidak bisa dibatalkan.')&&confirm('Yakin? Pastikan sudah backup.')){db=defaultDB();save();render();toast('Data direset')}">Reset Semua Data</button></div>
+ </div></div>`;
+}
+function saveSet(){
+ Object.assign(db.settings,{name:$('#tN').value.trim()||'Laundry',address:$('#tA').value.trim(),phone:$('#tP').value.trim(),footer:$('#tF').value.trim(),prefix:$('#tX').value.trim()||'LDR',expressPct:Math.max(0,num($('#tE').value))});
+ save();render();toast('Pengaturan disimpan');
+}
+function restore(f){
+ if(!f)return;const r=new FileReader();
+ r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.orders||!d.services||!d.settings)throw 0;if(!confirm('Ganti semua data saat ini dengan isi backup?'))return;db=d;save();render();toast('Backup dipulihkan')}catch(e){toast('File backup tidak valid')}};
+ r.readAsText(f);
+}
+function seedDemo(){
+ const names=[['Budi Santoso','081234567801'],['Siti Aminah','081234567802'],['Andi Wijaya','081234567803'],['Rina Marlina','081234567804'],['Dewi Lestari','081234567805'],['Agus Salim','081234567806']];
+ const cs=names.map(([n,p])=>({id:uid(),name:n,phone:p,address:'Makassar',createdAt:new Date().toISOString()}));
+ db.customers.push(...cs);
+ for(let i=0;i<28;i++){
+  const d=new Date();d.setDate(d.getDate()-Math.floor(Math.random()*20));d.setHours(8+Math.floor(Math.random()*10),Math.floor(Math.random()*60));
+  const s=db.services[Math.floor(Math.random()*db.services.length)];
+  const qty=s.unit==='kg'?+(2+Math.random()*6).toFixed(1):1+Math.floor(Math.random()*2);
+  const total=Math.round(s.price*qty);const age=(Date.now()-d)/864e5;
+  const status=age>4?'diambil':age>2?(Math.random()<.5?'siap':'diambil'):STATUSES[Math.floor(Math.random()*3)].k;
+  const pr=Math.random();const pay=status==='diambil'||pr<.5?total:pr<.75?Math.round(total/2/1000)*1000:0;
+  const due=new Date(d);due.setDate(due.getDate()+s.days);
+  db.orders.push({id:uid(),code:db.settings.prefix+dKey(d).slice(2).replace(/-/g,'')+'-'+String(db.seq++).padStart(4,'0'),customerId:cs[i%cs.length].id,
+   items:[{name:s.name,unit:s.unit,price:s.price,qty}],subtotal:total,expressFee:0,express:false,discount:0,total,note:'',
+   payments:pay?[{date:d.toISOString(),amount:pay,method:METHODS[Math.floor(Math.random()*3)]}]:[],status,history:[{status:'diterima',date:d.toISOString()}],createdAt:d.toISOString(),dueAt:due.toISOString()});
+ }
+ [['Deterjen & Pewangi','Deterjen 5L x2',180000],['Listrik','Token listrik',250000],['Plastik & Kemasan','Plastik laundry',60000]].forEach(([c,n,a],i)=>{const d=new Date();d.setDate(d.getDate()-i*3);db.expenses.push({id:uid(),date:dKey(d),category:c,note:n,amount:a})});
+ save();go('dashboard');toast('Data contoh ditambahkan');
+}
+
+render();
+</script>
+</body>
+</html>

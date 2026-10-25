@@ -1,0 +1,30 @@
+POST #06 - Jumat, 6 November 2026 - 19:00 WITA
+Status cucian: antre → cuci → setrika → siap ambil
+Pilar: Demo Fitur | Format: Slide foto (5 gambar) | Tema: Minggu 1, Kenalan & masalah pemilik laundry
+
+GAMBAR
+Folder: slides/06_status-cucian-antre-cuci-setrika-siap-am/  (upload urut 06-1.png sampai 06-5.png)
+
+ISI SLIDE
+1. "Kak, cucian saya udah selesai?" / Fara jawab dalam 3 detik
+2. Status cucian di aplikasi Diterima; Dicuci; Disetrika; Siap diambil; Sudah diambil
+3. Ganti status sekali ketuk - Tombol besar, langsung ke tahap berikutnya. (screenshot aplikasi)
+4. Semua cucian per status - Filter Aktif, Diterima, Dicuci, Disetrika. (screenshot aplikasi)
+5. Penutup fara-wash.app + Link di bio - Coba sekarang, link di bio
+
+==================== CAPTION (salin mulai baris bawah) ====================
+"Kak, cucian saya udah selesai?"
+
+Sekarang Fara cukup lihat status di HP: diterima, dicuci, disetrika, siap diambil. Jawab dalam 3 detik.
+
+Link di bio.
+
+Gratis, dan kalau ada masalah tinggal DM aku. Layanan purnajual paling murah se-TikTok.
+
+Coba gratis: https://fara-wash.app/
+
+#aplikasilaundry #kasirlaundry #aplikasikasir #farawash
+===========================================================================
+
+CEKLIS
+[ ] Cek slide   [ ] Upload & pilih musik   [ ] Jadwalkan (6 November, 19:00 WITA)   [ ] Isi views/like di Excel setelah 3 hari

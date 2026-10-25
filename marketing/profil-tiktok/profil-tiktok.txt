@@ -1,0 +1,83 @@
+PROFIL TIKTOK — fara-wash.app
+Salin tiap bagian ke Edit Profil di TikTok.
+
+==================================================
+FOTO PROFIL
+==================================================
+foto-profil-ikon.png  (folder ini)
+
+==================================================
+NAMA  (maks. 30 karakter)
+==================================================
+fara-wash.app · Kasir Laundry
+
+Cadangan:
+- fara-wash.app
+- Fara Wash | Kasir Laundry HP
+
+==================================================
+USERNAME  (huruf, angka, titik, garis bawah; tanpa tanda minus)
+==================================================
+farawash.app
+
+Cadangan kalau sudah dipakai orang:
+- fara.wash.app
+- farawash.id
+- farawash_app
+
+==================================================
+BIO  (maks. 80 karakter)
+==================================================
+Aplikasi kasir laundry yang aku bikin buat Fara. Masih gratis, cobain di bawah.
+
+==================================================
+WEBSITE / LINK
+==================================================
+https://fara-wash.app/
+
+==================================================
+AKUN BISNIS (opsional, disarankan)
+==================================================
+Profil > menu ☰ > Pengaturan dan privasi > Akun > Beralih ke Akun Bisnis.
+Kategori: pilih yang paling dekat dengan aplikasi/teknologi atau layanan bisnis.
+Untungnya: ada kolom Website, statistik, pesan sambutan & balasan cepat di DM.
+
+==================================================
+VIDEO DISEMATKAN (pin, maks. 3)
+==================================================
+1. Post #01  Perkenalan: "Pasanganku namanya Fara. Dia punya laundry."
+2. Post #23  Tutorial: "Dari nol sampai order pertama, 60 detik."
+3. Post #04b Kenapa daftarnya harus pakai email?
+(Sampai tanggal 23 Nov, pakai #01, #03, #04b dulu.)
+
+==================================================
+PESAN SAMBUTAN DM (fitur Akun Bisnis)
+==================================================
+Halo! Makasih sudah mampir ke fara-wash.app.
+Aplikasinya masih gratis, bisa langsung dicoba di https://fara-wash.app/
+Ada pertanyaan atau kendala? Tulis aja di sini, nanti aku balas. Kalau balasnya agak lama, berarti lagi disuruh angkat jemuran sama Yang Dipertuan Agung.
+
+==================================================
+BALASAN CEPAT DM (fitur Akun Bisnis)
+==================================================
+[Gratis?]
+Iya, sekarang masih gratis. Buruan dicoba, nanti kalau sudah berbayar jangan pada ngeluh ya.
+
+[Cara daftar]
+Buka link di bio, pilih Daftar Laundry, isi nama laundry, email pemilik, username & password, lalu masukkan kode OTP dari email. Panduan lengkap: https://fara-wash.app/panduan/
+
+[Kode OTP tidak masuk]
+Tunggu 1–2 menit, cek folder Spam/Promosi, dan pastikan alamat emailnya benar. Kalau masih belum masuk, minta kode baru.
+
+[Kasir perlu email?]
+Nggak perlu. Pemilik buat akun kasir di menu Tim & Akses, kasir cukup masuk pakai nama laundry, username, dan password.
+
+[Pasang di HP]
+Buka link di bio lewat browser HP, lalu pilih "Tambahkan ke layar utama" (atau menu Lainnya > Pasang Aplikasi).
+
+==================================================
+NAMA PLAYLIST (muncul setelah syarat TikTok terpenuhi)
+==================================================
+- Cara Pakai fara-wash.app
+- Tips Usaha Laundry
+- Cerita Aku & Fara

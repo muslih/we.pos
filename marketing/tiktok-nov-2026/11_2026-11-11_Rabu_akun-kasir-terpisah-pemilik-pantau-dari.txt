@@ -1,0 +1,30 @@
+POST #11 - Rabu, 11 November 2026 - 19:00 WITA
+Akun kasir terpisah, pemilik pantau dari HP
+Pilar: Demo Fitur | Format: Slide foto (5 gambar) | Tema: Minggu 2, Fitur inti fara-wash.app
+
+GAMBAR
+Folder: slides/11_akun-kasir-terpisah-pemilik-pantau-dari/  (upload urut 11-1.png sampai 11-5.png)
+
+ISI SLIDE
+1. Fara di rumah, tetap tahu semua order di laundry.
+2. Tiap kasir punya akun sendiri - Masuk dengan nama laundry + username + password. Tanpa email. (screenshot aplikasi)
+3. Atur hak akses - Kasir untuk order & pembayaran. Admin akses penuh. (screenshot aplikasi)
+4. [✓] Yang Dipertuan Agung tetap pegang kendali - Reset password atau nonaktifkan akun kasir kapan saja.
+5. Penutup fara-wash.app + Link di bio - Link di bio
+
+==================== CAPTION (salin mulai baris bawah) ====================
+Fara bisa istirahat di rumah, tapi tetap tahu semua order yang masuk di laundry.
+
+Kasir punya akun sendiri (username + password). Yang Dipertuan Agung tetap pegang kendali penuh.
+
+Link di bio.
+
+Selama masih gratis, komplainnya juga gratis. DM aku aja.
+
+Coba gratis: https://fara-wash.app/
+
+#aplikasilaundry #kasirlaundry #aplikasikasir #farawash
+===========================================================================
+
+CEKLIS
+[ ] Cek slide   [ ] Upload & pilih musik   [ ] Jadwalkan (11 November, 19:00 WITA)   [ ] Isi views/like di Excel setelah 3 hari

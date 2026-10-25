@@ -1,0 +1,490 @@
+---
+import '@fontsource/plus-jakarta-sans/latin-400.css';
+import '@fontsource/plus-jakarta-sans/latin-500.css';
+import '@fontsource/plus-jakarta-sans/latin-600.css';
+import '@fontsource/plus-jakarta-sans/latin-700.css';
+import '@fontsource/plus-jakarta-sans/latin-800.css';
+import '../styles/site.css';
+import Umami from '../components/Umami.astro';
+
+const base = import.meta.env.BASE_URL;
+const app = `${base}app/`;
+const g = (n: string) => `${base}guide-${n}.webp`;
+const l = (n: string) => `${base}landing-${n}.webp`;
+const ar = '<svg class="ar" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+const path = (...xs: string[]) => `<span class="mpath">${xs.map((x) => `<b>${x}</b>`).join(ar)}</span>`;
+
+const toc = [
+  ['mulai', 'Mulai & akun'],
+  ['tim', 'Tim, kasir & password'],
+  ['beranda', 'Beranda'],
+  ['kasir', 'Kasir / order baru'],
+  ['order', 'Daftar order & status'],
+  ['bayar', 'Pembayaran & nota'],
+  ['pelanggan', 'Pelanggan'],
+  ['layanan', 'Layanan & harga'],
+  ['keuangan', 'Keuangan'],
+  ['export', 'Export data'],
+  ['pengaturan', 'Pengaturan & backup'],
+  ['offline', 'Offline, sinkron & install'],
+  ['masalah', 'Masalah umum'],
+];
+---
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Panduan Penggunaan — Fara Wash</title>
+  <meta name="description" content="Panduan lengkap Fara Wash: daftar laundry, akun kasir & reset password, kasir, status cucian, pembayaran, nota WhatsApp, pelanggan, keuangan, export Excel/Google Sheets, pengaturan dan backup." />
+  <meta name="theme-color" content="#2563eb" />
+  <link rel="manifest" href={`${base}manifest.webmanifest`} />
+  <link rel="icon" type="image/png" sizes="192x192" href={`${base}icons/icon-192.png`} />
+  <link rel="apple-touch-icon" href={`${base}icons/apple-touch-icon.png`} />
+  <Umami />
+</head>
+<body class="guide">
+  <header class="nav" id="nav">
+    <div class="wrap navin">
+      <a class="brand" data-umami-event="docs-logo" data-umami-event-lokasi="header" href={base}><img src={`${base}icons/icon-192.png`} alt="" width="34" height="34" /><span>Fara Wash</span></a>
+      <nav class="links"><a data-umami-event="docs-nav" data-umami-event-lokasi="fitur" href={`${base}#fitur`}>Fitur</a><a href={`${base}panduan/`} class="cur">Panduan</a><a data-umami-event="docs-nav" data-umami-event-lokasi="faq" href={`${base}#faq`}>FAQ</a></nav>
+      <div class="navbtn">
+        <a class="btn ghost" data-auth data-umami-event="klik-masuk" data-umami-event-lokasi="docs-header" href={`${app}?masuk`}>Masuk</a>
+        <a class="btn pri" data-umami-event="klik-daftar" data-umami-event-lokasi="docs-header" href={`${app}?daftar`}>Daftar</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="ghero">
+    <div class="wrap">
+      <span class="eyebrow">Panduan</span>
+      <h1>Panduan penggunaan Fara Wash</h1>
+      <p>Langkah demi langkah memakai semua fitur — dari daftar laundry, membuat akun kasir, mencatat order, sampai laporan keuangan.</p>
+      <div class="gsearch"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"/></svg><input id="q" type="search" placeholder="Cari panduan… mis. reset password, nota, export" /></div>
+    </div>
+  </section>
+
+  <div class="tocbar" id="tocbar"><div class="wrap">{toc.map(([id, t]) => <a href={`#${id}`} data-id={id} data-umami-event="docs-bab" data-umami-event-bab={id} data-umami-event-lokasi="tocbar">{t}</a>)}</div></div>
+
+  <div class="wrap glayout">
+    <aside class="side">
+      <b>Daftar isi</b>
+      <nav>{toc.map(([id, t], i) => <a href={`#${id}`} data-id={id} data-umami-event="docs-bab" data-umami-event-bab={id} data-umami-event-lokasi="sidebar"><span>{i + 1}</span>{t}</a>)}</nav>
+      <a class="btn pri" data-umami-event="klik-daftar" data-umami-event-lokasi="docs-sidebar" href={`${app}?daftar`} style="width:100%;margin-top:16px">Coba sekarang</a>
+    </aside>
+
+    <article class="doc" id="doc">
+      <div class="callout info"><b>Istilah singkat.</b> <b>Pemilik</b> = yang mendaftarkan laundry. <b>Admin</b> = akses penuh seperti pemilik. <b>Kasir</b> = mencatat order & pembayaran. Semua orang masuk dengan <b>nama laundry + username + password</b>.</div>
+
+      <!-- 1 -->
+      <section id="mulai" class="gs">
+        <h2><span class="n">1</span>Mulai & akun</h2>
+        <div class="row2">
+          <div>
+            <h3>Daftar laundry (pemilik)</h3>
+            <ol>
+              <li>Buka <a data-umami-event="buka-app" data-umami-event-lokasi="docs-mulai" href={app}>fara-wash.vercel.app/app</a>, pilih <b>Daftar Laundry</b>.</li>
+              <li>Isi <b>Nama laundry</b>. Di bawahnya muncul <i>kode laundry</i> (mis. <code>bersih-kilat</code>) — nama ini dipakai saat masuk.</li>
+              <li>Isi <b>Nama Anda</b>, <b>Email pemilik</b>, <b>Username</b> dan <b>Password</b> (minimal 6 karakter, diulang sekali), serta No. WhatsApp laundry (opsional).</li>
+              <li>Ketuk <b>Daftar &amp; kirim kode OTP</b>. Buka email Anda (cek juga folder <i>Spam/Promosi</i>), lalu masukkan kode OTP.</li>
+              <li>Laundry langsung siap: Anda masuk sebagai <b>Pemilik</b>, dan 8 layanan contoh (kiloan, bed cover, sepatu, dll.) sudah tersedia untuk diubah.</li>
+            </ol>
+            <div class="callout tip"><b>Kenapa perlu email?</b> Email pemilik dipakai untuk verifikasi (kode OTP), <b>mengaktifkan HP kasir</b>, dan <b>reset password pemilik</b> bila lupa. Kasir tidak perlu email.</div>
+            <h3>Masuk</h3>
+            <ol>
+              <li>Pilih <b>Masuk</b>, isi <b>Nama laundry</b>, <b>Username</b>, dan <b>Password</b>.</li>
+              <li>Bila HP tersebut belum pernah dipakai untuk laundry itu, muncul layar <b>Aktifkan HP ini</b> — lihat bagian <a href="#aktivasi">Aktifkan HP kasir</a>.</li>
+            </ol>
+            <h3>Keluar & ganti akun</h3>
+            <p><Fragment set:html={path('Lainnya', 'Keluar')} />. HP tetap terhubung ke laundry, jadi kasir berikutnya cukup masuk dengan username & password miliknya (cocok untuk pergantian shift).</p>
+          </div>
+          <figure class="ph"><img src={g('welcome')} alt="Layar pembuka: Masuk atau Daftar Laundry" loading="lazy" width="585" height="1266" /><figcaption>Layar pembuka</figcaption></figure>
+        </div>
+      </section>
+
+      <!-- 2 -->
+      <section id="tim" class="gs">
+        <h2><span class="n">2</span>Tim, kasir & password</h2>
+        <div class="row2">
+          <div>
+            <h3>Peran & hak akses</h3>
+            <div class="tbl"><table>
+              <tr><th>Fitur</th><th>Pemilik</th><th>Admin</th><th>Kasir</th></tr>
+              <tr><td>Buat order, ubah status, terima pembayaran</td><td>✓</td><td>✓</td><td>✓</td></tr>
+              <tr><td>Tambah / edit pelanggan</td><td>✓</td><td>✓</td><td>✓</td></tr>
+              <tr><td>Lihat layanan & harga</td><td>✓</td><td>✓</td><td>Lihat saja</td></tr>
+              <tr><td>Keuangan, Export, Pengaturan</td><td>✓</td><td>✓</td><td>—</td></tr>
+              <tr><td>Tim & Akses (buat/reset akun)</td><td>✓</td><td>✓</td><td>—</td></tr>
+              <tr><td>Hapus order / pelanggan</td><td>✓</td><td>✓</td><td>—</td></tr>
+              <tr><td>Ubah akun pemilik, putuskan HP</td><td>✓</td><td>—</td><td>—</td></tr>
+            </table></div>
+            <h3>Membuat akun kasir / admin</h3>
+            <ol>
+              <li><Fragment set:html={path('Lainnya', 'Tim & Akses', 'Tambah Akun Kasir / Admin')} />.</li>
+              <li>Isi <b>Nama</b>, <b>Username</b> (huruf kecil/angka, mis. <code>rina</code>), pilih <b>Peran</b>, dan buat <b>Password</b>.</li>
+              <li>Berikan ke kasir: <b>nama laundry</b>, <b>username</b>, dan <b>password</b>-nya. Kasir tidak perlu email.</li>
+            </ol>
+            <h3>Reset password kasir / admin</h3>
+            <ol>
+              <li><Fragment set:html={path('Lainnya', 'Tim & Akses')} />, ketuk nama kasir.</li>
+              <li>Isi kolom <b>Reset password</b> dengan password baru, lalu <b>Simpan</b>.</li>
+              <li>Password lama langsung tidak berlaku di semua HP setelah tersinkron.</li>
+            </ol>
+            <h3>Nonaktifkan / hapus akun</h3>
+            <p>Di form akun, matikan <b>Akun aktif</b> (misalnya karyawan cuti) atau ketuk <b>Hapus Akun</b>. Kasir yang sedang masuk otomatis dikeluarkan. Riwayat order yang ia buat tetap tersimpan atas namanya.</p>
+          </div>
+          <figure class="ph"><img src={g('tim')} alt="Halaman Tim & Akses" loading="lazy" width="585" height="1266" /><figcaption>Tim & Akses</figcaption></figure>
+        </div>
+
+        <div class="row2" id="aktivasi">
+          <div>
+            <h3>Aktifkan HP kasir (sekali per HP)</h3>
+            <p>Agar data aman, HP baru harus diaktifkan oleh pemilik satu kali:</p>
+            <ol>
+              <li>Di HP kasir, buka aplikasi, pilih <b>Masuk</b>, isi nama laundry + username + password kasir.</li>
+              <li>Muncul layar <b>Aktifkan HP ini</b>. Pemilik mengisi <b>email pemilik</b>, lalu memasukkan <b>kode OTP</b> yang masuk ke email pemilik.</li>
+              <li>Selesai — kasir langsung masuk. Berikutnya kasir cukup memakai username & password, tanpa OTP.</li>
+            </ol>
+            <div class="callout tip">Satu HP bisa dipakai bergantian beberapa kasir (shift). Untuk melepas HP (mis. HP hilang/dijual): <Fragment set:html={path('Lainnya', 'Perangkat ini')} /> atau <Fragment set:html={path('Akun Saya', 'Putuskan HP ini')} /> — hanya pemilik.</div>
+            <h3>Lupa password pemilik</h3>
+            <ol>
+              <li>Di layar <b>Masuk</b>, ketuk <b>Lupa password pemilik?</b></li>
+              <li>Isi nama laundry, <b>email pemilik</b>, dan password baru (2×).</li>
+              <li>Ketuk <b>Kirim kode OTP</b>, masukkan kode dari email. Password baru langsung berlaku dan Anda otomatis masuk.</li>
+            </ol>
+            <h3>Ganti nama & password sendiri</h3>
+            <p><Fragment set:html={path('Lainnya', 'ketuk nama Anda (Akun Saya)')} />. Ubah <b>Nama tampilan</b> (tercatat di setiap order), atau isi password lama + password baru.</p>
+          </div>
+          <figure class="ph"><img src={g('resetakun')} alt="Form edit akun dengan kolom reset password" loading="lazy" width="585" height="1266" /><figcaption>Reset password kasir</figcaption></figure>
+        </div>
+      </section>
+
+      <!-- 3 -->
+      <section id="beranda" class="gs">
+        <h2><span class="n">3</span>Beranda</h2>
+        <div class="row2">
+          <div>
+            <ul>
+              <li><b>Pemasukan hari ini</b> — total uang yang diterima hari ini, plus jumlah order masuk, sedang diproses, dan siap diambil.</li>
+              <li><b>Aksi cepat</b> — Order Baru, Siap Ambil (angka merah = jumlah cucian menunggu diambil), Pelanggan, dan Laporan.</li>
+              <li><b>Piutang</b> — total tagihan yang belum dibayar. Ketuk untuk melihat daftarnya.</li>
+              <li><b>Peringatan terlambat</b> — muncul bila ada order melewati estimasi selesai.</li>
+              <li><b>Grafik 14 hari</b> (pemilik/admin) — ketuk batang untuk melihat nominal per hari.</li>
+              <li><b>Status cucian</b> & <b>Order terbaru</b> — ketuk untuk membuka daftarnya.</li>
+            </ul>
+            <p>Titik kecil di pojok kanan atas menunjukkan status sinkron: <span class="dotx ok"></span> tersinkron, <span class="dotx busy"></span> sedang sinkron, <span class="dotx off"></span> offline.</p>
+          </div>
+          <figure class="ph"><img src={l('home')} alt="Beranda" loading="lazy" width="585" height="1266" /><figcaption>Beranda</figcaption></figure>
+        </div>
+      </section>
+
+      <!-- 4 -->
+      <section id="kasir" class="gs">
+        <h2><span class="n">4</span>Kasir / order baru</h2>
+        <div class="row2">
+          <div>
+            <p>Ketuk tombol <b>+</b> di tengah menu bawah.</p>
+            <ol>
+              <li><b>Pelanggan</b> — ketuk <i>Pilih / tambah pelanggan</i>. Cari nama/no. HP, atau <b>+ Pelanggan Baru</b>.</li>
+              <li><b>Layanan</b> — ketuk kartu layanan. Ketuk lagi untuk menambah jumlah (angka di pojok kartu).</li>
+              <li><b>Rincian</b> — atur jumlah dengan <b>− / +</b> (kiloan naik 0,5 kg) atau ketik langsung, mis. <code>3.7</code>. Jumlah 0 menghapus baris.</li>
+              <li><b>Express</b> — aktifkan untuk tambahan biaya (default +50%) dan estimasi selesai lebih cepat.</li>
+              <li><b>Diskon</b> (Rupiah) & <b>Catatan</b> (noda, parfum, jumlah potong…). <b>Estimasi selesai</b> dihitung otomatis dari durasi layanan.</li>
+              <li><b>Pembayaran</b> — pilih Tunai / Transfer / QRIS. Ketuk <b>Lunas</b>, isi nominal DP, atau <b>Bayar nanti</b>. Bila uang lebih, <b>kembalian</b> ditampilkan.</li>
+              <li>Ketuk <b>Simpan Order</b>. Nomor nota dibuat otomatis (mis. <code>BER261023-7K2M</code>) dan detail order langsung terbuka untuk kirim nota.</li>
+            </ol>
+          </div>
+          <figure class="ph"><img src={l('kasir')} alt="Halaman kasir" loading="lazy" width="585" height="1266" /><figcaption>Order baru</figcaption></figure>
+        </div>
+      </section>
+
+      <!-- 5 -->
+      <section id="order" class="gs">
+        <h2><span class="n">5</span>Daftar order & status cucian</h2>
+        <div class="row2">
+          <div>
+            <h3>Mencari & menyaring</h3>
+            <p>Menu <b>Order</b>. Gunakan kolom cari (no. nota, nama, no. HP) dan tab filter: <b>Aktif</b>, per status, <b>Belum Lunas</b>, <b>Terlambat</b>, <b>Semua</b>.</p>
+            <h3>Alur status</h3>
+            <p class="flow"><span>Diterima</span>{'' }<Fragment set:html={ar} /><span>Dicuci</span><Fragment set:html={ar} /><span>Disetrika</span><Fragment set:html={ar} /><span>Siap Diambil</span><Fragment set:html={ar} /><span>Sudah Diambil</span></p>
+            <ol>
+              <li>Ketuk order, lalu tombol biru <b>Tandai: …</b> untuk maju ke status berikutnya.</li>
+              <li>Saat ditandai <b>Siap Diambil</b>, aplikasi menawarkan kirim WhatsApp “cucian siap diambil” ke pelanggan.</li>
+              <li>Saat ditandai <b>Sudah Diambil</b> tapi masih ada sisa tagihan, aplikasi menawarkan mencatat pelunasan tunai sekaligus.</li>
+              <li>Salah status? Ketuk <b>Ubah Status</b> untuk memilih status mana pun.</li>
+            </ol>
+            <p>Setiap perubahan tercatat di <b>Riwayat status</b> lengkap dengan waktu dan nama akun yang mengubah.</p>
+            <div class="callout warn"><b>Hapus order</b> hanya untuk pemilik/admin (tombol di bagian bawah detail). Data pembayarannya ikut terhapus.</div>
+          </div>
+          <figure class="ph"><img src={g('order')} alt="Daftar order" loading="lazy" width="585" height="1266" /><figcaption>Daftar order</figcaption></figure>
+        </div>
+      </section>
+
+      <!-- 6 -->
+      <section id="bayar" class="gs">
+        <h2><span class="n">6</span>Pembayaran & nota</h2>
+        <div class="row2">
+          <div>
+            <h3>Terima pembayaran / pelunasan</h3>
+            <ol>
+              <li>Buka detail order yang masih ada <b>Sisa</b>.</li>
+              <li>Di <b>Terima pembayaran</b>, nominal sisa sudah terisi — ubah bila bayar sebagian, pilih metode, ketuk <b>Simpan Pembayaran</b>.</li>
+              <li>Label berubah: <span class="pill2 r">Belum Bayar</span> <span class="pill2 y">DP</span> <span class="pill2 g">Lunas</span>.</li>
+            </ol>
+            <h3>Nota</h3>
+            <ul>
+              <li><b>Nota WA</b> — membuka WhatsApp ke nomor pelanggan berisi rincian nota.</li>
+              <li><b>Bagikan</b> — kirim nota lewat aplikasi lain (Telegram, email, dll.).</li>
+              <li><b>Cetak</b> — format struk 58mm. Pilih printer thermal (Bluetooth/USB yang terpasang di HP/komputer) atau simpan PDF.</li>
+              <li><b>Info Siap</b> — muncul saat status Siap Diambil, mengirim pesan pengingat ambil cucian.</li>
+            </ul>
+            <p>Isi nota (nama laundry, slogan, alamat, telepon, logo, pesan bawah) diatur di <a href="#pengaturan">Pengaturan</a>.</p>
+          </div>
+          <figure class="ph"><img src={g('order-detail')} alt="Detail order dengan pembayaran dan tombol nota" loading="lazy" width="585" height="1266" /><figcaption>Detail order</figcaption></figure>
+        </div>
+      </section>
+
+      <!-- 7 -->
+      <section id="pelanggan" class="gs">
+        <h2><span class="n">7</span>Pelanggan</h2>
+        <div class="row2">
+          <div>
+            <ul>
+              <li><b>Tambah</b>: menu <b>Pelanggan</b> → <b>+ Baru</b> (nama wajib, no. HP untuk WhatsApp). No. HP yang sama tidak bisa didaftarkan dua kali.</li>
+              <li><b>Cari</b> dengan nama atau no. HP. Angka merah di daftar = piutang pelanggan.</li>
+              <li><b>Detail</b>: total belanja, piutang, riwayat semua order, tombol <b>+ Order</b> (langsung ke kasir) dan <b>WhatsApp</b>.</li>
+              <li><b>Edit</b> nama/HP/alamat kapan saja. <b>Hapus</b> hanya bila pelanggan belum punya order.</li>
+            </ul>
+          </div>
+          <figure class="ph"><img src={g('pelanggan-detail')} alt="Detail pelanggan" loading="lazy" width="585" height="1266" /><figcaption>Detail pelanggan</figcaption></figure>
+        </div>
+      </section>
+
+      <!-- 8 -->
+      <section id="layanan" class="gs">
+        <h2><span class="n">8</span>Layanan & harga</h2>
+        <div class="row2">
+          <div>
+            <p><Fragment set:html={path('Lainnya', 'Layanan & Harga')} /> (ubah: pemilik/admin).</p>
+            <ol>
+              <li><b>+ Baru</b> untuk menambah, atau ketuk layanan untuk mengubah.</li>
+              <li>Isi <b>Nama</b>, <b>Harga</b>, <b>Satuan</b> (kg, pcs, pasang, m2, set), dan <b>Durasi</b> (hari) untuk estimasi selesai.</li>
+              <li>Perubahan harga hanya berlaku untuk order baru — order lama tetap memakai harga saat dibuat.</li>
+            </ol>
+            <p>Besar biaya <b>Express</b> (%) diatur di Pengaturan. Express memotong durasi menjadi setengahnya.</p>
+          </div>
+          <figure class="ph"><img src={g('layanan')} alt="Layanan & harga" loading="lazy" width="585" height="1266" /><figcaption>Layanan & harga</figcaption></figure>
+        </div>
+      </section>
+
+      <!-- 9 -->
+      <section id="keuangan" class="gs">
+        <h2><span class="n">9</span>Keuangan</h2>
+        <div class="row2">
+          <div>
+            <p><Fragment set:html={path('Lainnya', 'Keuangan')} /> atau aksi cepat <b>Laporan</b> (pemilik/admin).</p>
+            <ul>
+              <li><b>Periode</b>: Hari ini, 7 hari, Bulan ini, Bulan lalu, atau tanggal bebas.</li>
+              <li><b>Laba bersih</b> = uang masuk − pengeluaran, plus jumlah order pada periode.</li>
+              <li><b>Grafik laporan</b> — geser kiri–kanan untuk 9 grafik: pemasukan & pengeluaran, laba bersih (untung/rugi), jumlah order, jam ramai, metode pembayaran, layanan terlaris, pengeluaran per kategori, pelanggan teratas, dan cucian dalam proses. Ketuk grafik untuk melihat angka per hari, atau <b>Lihat tabel</b> untuk angka lengkapnya. Periode panjang otomatis dikelompokkan per minggu / per bulan.</li>
+              <li><b>Ringkas</b>: pemasukan per metode (Tunai/Transfer/QRIS) dan layanan terlaris.</li>
+              <li><b>Masuk</b>: daftar setiap pembayaran, lengkap dengan nama kasir penerima.</li>
+              <li><b>Keluar</b>: catat pengeluaran — ketuk <b>+ Biaya</b>, isi jumlah, tanggal, kategori (deterjen, listrik, gaji, sewa, dll.) dan keterangan.</li>
+              <li><b>Piutang</b>: semua order belum lunas; ketuk untuk menagih/menerima pembayaran.</li>
+            </ul>
+          </div>
+          <figure class="ph"><img src={l('keuangan')} alt="Keuangan" loading="lazy" width="585" height="1266" /><figcaption>Keuangan</figcaption></figure>
+        </div>
+      </section>
+
+      <!-- 10 -->
+      <section id="export" class="gs">
+        <h2><span class="n">10</span>Export data (Excel, CSV, Google Sheets)</h2>
+        <div class="row2">
+          <div>
+            <p><Fragment set:html={path('Lainnya', 'Export Data')} />, atau tombol export di halaman Keuangan (periode ikut terbawa).</p>
+            <ol>
+              <li>Pilih <b>periode</b>.</li>
+              <li>Centang data: Order, Rincian Layanan, Pembayaran, Pengeluaran, Ringkasan Harian, Piutang, Pelanggan, Layanan & Harga. Jumlah baris tampil di kanan.</li>
+              <li>Pilih format:
+                <ul>
+                  <li><b>Excel (.xlsx)</b> — satu file, tiap data jadi satu sheet, angka & tanggal sudah berformat, ada filter.</li>
+                  <li><b>CSV</b> — satu file per data (dikemas .zip bila lebih dari satu).</li>
+                  <li><b>Google Sheets</b> — ketuk <b>Salin</b>, buka Google Sheets baru, lalu tempel.</li>
+                </ul>
+              </li>
+            </ol>
+            <div class="callout tip">Mengimpor Excel ke Google Sheets: <Fragment set:html={path('File', 'Impor', 'Upload')} />.</div>
+          </div>
+          <figure class="ph"><img src={g('ekspor')} alt="Export data" loading="lazy" width="585" height="1266" /><figcaption>Export data</figcaption></figure>
+        </div>
+      </section>
+
+      <!-- 11 -->
+      <section id="pengaturan" class="gs">
+        <h2><span class="n">11</span>Pengaturan & backup</h2>
+        <div class="row2">
+          <div>
+            <p><Fragment set:html={path('Lainnya', 'Pengaturan')} /> (pemilik/admin).</p>
+            <ul>
+              <li><b>Identitas laundry</b>: logo, nama, slogan, alamat, no. WhatsApp — tampil di header, nota, dan pesan WA.</li>
+              <li><b>Warna tema</b>: 8 pilihan; seluruh tampilan aplikasi mengikuti warna ini. Lihat <b>Pratinjau</b> sebelum menyimpan.</li>
+              <li><b>Pesan bawah nota</b>, <b>Prefix no. nota</b> (3 huruf awal nomor nota), dan <b>Biaya express</b> (%).</li>
+              <li><b>Backup Data (JSON)</b>: menyimpan semua data ke file sebagai arsip.</li>
+              <li><b>Impor dari Backup</b>: memasukkan data dari file backup (data yang ada tidak dihapus).</li>
+              <li><b>Isi Data Contoh</b>: menambah data percobaan untuk latihan.</li>
+            </ul>
+          </div>
+          <figure class="ph"><img src={g('pengaturan')} alt="Pengaturan" loading="lazy" width="585" height="1266" /><figcaption>Pengaturan</figcaption></figure>
+        </div>
+      </section>
+
+      <!-- 12 -->
+      <section id="offline" class="gs">
+        <h2><span class="n">12</span>Offline, sinkron & install di HP</h2>
+        <h3>Bekerja tanpa internet</h3>
+        <p>Semua data disimpan di HP terlebih dahulu, jadi kasir tetap bisa mencatat order saat sinyal hilang. Begitu online, data otomatis dikirim dan muncul di HP lain (pemilik, kasir lain). Masuk pertama kali dan aktivasi HP membutuhkan internet.</p>
+        <h3>Install seperti aplikasi</h3>
+        <div class="grid2">
+          <div class="card2"><b>Android (Chrome)</b><ol><li>Buka <a data-umami-event="buka-app" data-umami-event-lokasi="docs-install-android" href={app}>aplikasi</a> di Chrome.</li><li>Ketuk menu <b>⋮</b> <Fragment set:html={path('Instal aplikasi')} /> atau <b>Tambahkan ke layar utama</b>.</li><li>Atau: <Fragment set:html={path('Lainnya', 'Pasang Aplikasi')} />.</li></ol></div>
+          <div class="card2"><b>iPhone (Safari)</b><ol><li>Buka <a data-umami-event="buka-app" data-umami-event-lokasi="docs-install-iphone" href={app}>aplikasi</a> di Safari.</li><li>Ketuk ikon <b>Bagikan</b> <Fragment set:html={path('Add to Home Screen')} />.</li><li>Buka dari ikon Fara Wash di layar utama.</li></ol></div>
+        </div>
+      </section>
+
+      <!-- 13 -->
+      <section id="masalah" class="gs">
+        <h2><span class="n">13</span>Masalah umum</h2>
+        <div class="faq">
+          <details><summary>Kode OTP tidak masuk<span class="plus"></span></summary><p>Tunggu 1–2 menit, periksa folder <b>Spam/Promosi</b>, pastikan alamat email benar. Kode hanya berlaku sebentar — minta kode baru bila kedaluwarsa.</p></details>
+          <details><summary>“Laundry tidak terhubung di HP ini” / diminta aktivasi<span class="plus"></span></summary><p>HP tersebut belum diaktifkan untuk laundry itu. Pemilik memasukkan email pemilik & kode OTP sekali di layar <b>Aktifkan HP ini</b>. Periksa juga ejaan nama laundry.</p></details>
+          <details><summary>Kasir lupa password<span class="plus"></span></summary><p>Pemilik/admin membuka <Fragment set:html={path('Tim & Akses')} />, ketuk akun kasir, isi <b>Reset password</b>, lalu Simpan.</p></details>
+          <details><summary>Pemilik lupa password<span class="plus"></span></summary><p>Di layar Masuk ketuk <b>Lupa password pemilik?</b>, isi email pemilik dan password baru, lalu masukkan kode OTP dari email.</p></details>
+          <details><summary>Data tidak muncul di HP lain<span class="plus"></span></summary><p>Pastikan kedua HP online dan masuk ke laundry yang sama. Perhatikan titik status di pojok kanan atas; tunggu hingga hijau (tersinkron).</p></details>
+          <details><summary>Kasir tidak bisa membuka Keuangan / Export<span class="plus"></span></summary><p>Memang dibatasi untuk pemilik & admin. Ubah peran akun menjadi <b>Admin</b> bila perlu akses penuh.</p></details>
+          <details><summary>Tampilan tidak berubah setelah update<span class="plus"></span></summary><p>Tutup lalu buka lagi aplikasinya (atau tarik ke bawah untuk memuat ulang). Versi baru akan dipakai otomatis.</p></details>
+        </div>
+        <div class="callout info" style="margin-top:22px">Siap mencoba? <a data-umami-event="klik-daftar" data-umami-event-lokasi="docs-akhir" href={`${app}?daftar`}><b>Daftarkan laundry Anda</b></a> atau <a data-umami-event="klik-masuk" data-umami-event-lokasi="docs-akhir" href={`${app}?masuk`}><b>masuk</b></a>.</div>
+      </section>
+      <p class="noresult" id="noresult" hidden>Tidak ada bagian yang cocok. Coba kata lain, mis. “nota”, “password”, “export”.</p>
+    </article>
+  </div>
+
+  <footer class="foot">
+    <div class="wrap footin">
+      <a class="brand" href={base}><img src={`${base}icons/icon-192.png`} alt="" width="28" height="28" /><span>Fara Wash</span></a>
+      <nav><a data-umami-event="docs-nav" data-umami-event-lokasi="beranda-footer" href={base}>Beranda</a><a href={`${base}panduan/`}>Panduan</a><a data-umami-event="klik-masuk" data-umami-event-lokasi="docs-footer" href={`${app}?masuk`}>Masuk</a><a data-umami-event="klik-daftar" data-umami-event-lokasi="docs-footer" href={`${app}?daftar`}>Daftar</a></nav>
+      <small>© {new Date().getFullYear()} Fara Wash · Aplikasi kasir laundry</small>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav')!;
+    addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 8), { passive: true });
+    if (localStorage.getItem('fw_session')) document.querySelectorAll<HTMLAnchorElement>('[data-auth]').forEach((a) => { a.href = 'app/'.replace(/^/, '../'); a.textContent = 'Buka Aplikasi'; });
+    // Sorot bagian yang sedang dibaca
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-id]')];
+    const secs = [...document.querySelectorAll<HTMLElement>('.gs')];
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting) return;
+      links.forEach((a) => a.classList.toggle('on', a.dataset.id === e.target.id));
+      const chip = document.querySelector<HTMLElement>(`.tocbar a[data-id="${e.target.id}"]`);
+      chip?.parentElement?.scrollTo({ left: chip.offsetLeft - 16, behavior: 'smooth' });
+    }), { rootMargin: '-30% 0px -60% 0px' });
+    secs.forEach((s) => io.observe(s));
+    // Pencarian
+    const q = document.getElementById('q') as HTMLInputElement, nores = document.getElementById('noresult')!;
+    q.addEventListener('input', () => {
+      const v = q.value.trim().toLowerCase(); let n = 0;
+      secs.forEach((s) => { const hit = !v || s.textContent!.toLowerCase().includes(v); s.hidden = !hit; if (hit) n++; });
+      document.querySelector<HTMLElement>('.doc > .callout')!.hidden = !!v;
+      nores.hidden = n > 0;
+      if (v && n) document.querySelector('.gs:not([hidden])')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Umami: catat kata kunci setelah berhenti mengetik 1,2 dtk
+      clearTimeout(qt);
+      if (v.length >= 3) qt = setTimeout(() => (window as any).umami?.track('docs-cari', { kata: v.slice(0, 60), hasil: n }), 1200);
+    });
+    let qt: any;
+  </script>
+
+  <style is:global>
+    .guide .links a.cur{color:var(--pri)}
+    .guide .nav{background:rgba(255,255,255,.97)}
+    .ghero{padding:44px 0 26px;background:radial-gradient(900px 360px at 85% -20%,#dbe7ff 0%,transparent 60%)}
+    .ghero h1{font-size:clamp(30px,4.6vw,46px);font-weight:800;margin:4px 0 10px}
+    .ghero p{color:var(--tx2);font-size:17px;max-width:640px;margin:0 0 20px}
+    .gsearch{position:relative;max-width:560px}
+    .gsearch svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--mut)}
+    .gsearch input{width:100%;padding:14px 14px 14px 44px;border:1px solid var(--bd);border-radius:8px;font:inherit;font-size:16px;background:#fff;box-shadow:var(--sh)}
+    .gsearch input:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 4px var(--pri-l)}
+    .tocbar{display:none;position:sticky;top:66px;z-index:40;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--bd)}
+    .tocbar .wrap{display:flex;gap:6px;overflow-x:auto;padding-top:10px;padding-bottom:10px;scrollbar-width:none}
+    .tocbar .wrap::-webkit-scrollbar{display:none}
+    .tocbar a{white-space:nowrap;font-size:13px;font-weight:600;padding:7px 12px;border-radius:6px;background:var(--bg2);color:var(--tx2)}
+    .tocbar a.on{background:var(--pri);color:#fff}
+    .glayout{display:grid;grid-template-columns:240px 1fr;gap:44px;padding-top:28px;padding-bottom:70px}
+    .side{position:sticky;top:90px;align-self:start;max-height:calc(100vh - 110px);overflow:auto}
+    .side>b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin-bottom:10px}
+    .side nav{display:grid;gap:2px}
+    .side nav a{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:6px;font-size:14px;font-weight:600;color:var(--tx2)}
+    .side nav a span{width:22px;height:22px;border-radius:5px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:11.5px;color:var(--mut);flex-shrink:0}
+    .side nav a:hover{background:var(--bg2)}
+    .side nav a.on{background:var(--pri-l);color:var(--pri-d)}
+    .side nav a.on span{background:var(--pri);color:#fff}
+    .doc{min-width:0;font-size:15.5px;color:var(--tx2)}
+    .gs{padding:34px 0 10px;border-top:1px solid var(--bd);scroll-margin-top:84px}
+    .gs:first-of-type{border-top:0}
+    .gs h2{font-size:clamp(22px,2.6vw,28px);font-weight:800;color:var(--tx);display:flex;align-items:center;gap:12px;margin-bottom:6px}
+    .gs h2 .n{width:34px;height:34px;border-radius:8px;background:var(--pri);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .gs h3{font-size:17.5px;font-weight:800;color:var(--tx);margin:24px 0 8px}
+    .gs p{margin:8px 0}
+    .gs ol,.gs ul{padding-left:22px;margin:8px 0}
+    .gs li{margin:6px 0}
+    .gs li::marker{color:var(--pri);font-weight:700}
+    .gs a{color:var(--pri);font-weight:600}
+    .gs code{background:var(--bg2);padding:1px 6px;border-radius:4px;font-size:.92em;color:var(--tx)}
+    .gs b{color:var(--tx)}
+    .row2{display:grid;grid-template-columns:1fr 220px;gap:32px;align-items:start}
+    .row2>*{min-width:0}
+    .ph{margin:20px 0 0}
+    .ph img{width:100%;height:auto;border-radius:22px;border:6px solid #0f172a;box-shadow:0 20px 40px -20px rgba(15,23,42,.45)}
+    .ph figcaption{text-align:center;font-size:12.5px;color:var(--mut);margin-top:8px;font-weight:600}
+    .mpath{display:inline-flex;align-items:center;flex-wrap:wrap;gap:2px;background:var(--bg2);border:1px solid var(--bd);border-radius:6px;padding:1px 8px;font-size:.92em;vertical-align:1px}
+    .mpath b{font-weight:700;color:var(--tx)}
+    .mpath .ar,.flow .ar{color:var(--mut)}
+    .flow{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+    .flow span{background:var(--pri-l);color:var(--pri-d);font-weight:700;font-size:13px;padding:4px 10px;border-radius:6px}
+    .callout{border-radius:8px;padding:13px 16px;margin:16px 0;font-size:14.5px;border:1px solid}
+    .callout.info{background:var(--pri-xl);border-color:#d6e2fb}
+    .callout.tip{background:#f0fdf4;border-color:#bbf7d0}
+    .callout.warn{background:#fffbeb;border-color:#fde68a}
+    .tbl{overflow-x:auto;border:1px solid var(--bd);border-radius:8px;margin:10px 0}
+    .tbl table{width:100%;border-collapse:collapse;font-size:14px;min-width:420px}
+    .tbl th,.tbl td{padding:10px 12px;text-align:center;border-bottom:1px solid var(--bd)}
+    .tbl th{background:var(--bg2);color:var(--tx);font-weight:700}
+    .tbl td:first-child,.tbl th:first-child{text-align:left}
+    .tbl tr:last-child td{border-bottom:0}
+    .pill2{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:5px}
+    .pill2.r{background:#ffe4e6;color:#be123c}.pill2.y{background:#fef3c7;color:#b45309}.pill2.g{background:#dcfce7;color:#15803d}
+    .dotx{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:0}
+    .dotx.ok{background:#16a34a}.dotx.busy{background:#d97706}.dotx.off{background:#94a3b8}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .card2{border:1px solid var(--bd);border-radius:8px;padding:16px;background:#fff}
+    .card2>b{font-size:15.5px;color:var(--tx)}
+    .noresult{padding:30px 0;color:var(--mut)}
+    @media (max-width:980px){
+      .glayout{grid-template-columns:1fr;gap:0;padding-top:6px}
+      .side{display:none}
+      .tocbar{display:block}
+      .row2{grid-template-columns:1fr 180px;gap:20px}
+    }
+    @media (max-width:640px){
+      .tocbar{top:66px}
+      .row2{grid-template-columns:1fr}
+      .ph{position:static;max-width:220px;margin:16px auto 6px}
+      .grid2{grid-template-columns:1fr}
+      .gs{padding-top:26px}
+      .doc{font-size:15px}
+    }
+  </style>
+</body>
+</html>
