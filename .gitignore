@@ -6,3 +6,4 @@ dist/
 dexie-cloud.key
 .vercel
 .env.*.local
+Claude outputs/
